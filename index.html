@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NBA Career Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de criação de jogador -->
+        <div id="create-player" class="screen">
+            <header>
+                <h1>NBA Career Simulator</h1>
+                <p>Crie seu jogador e comece sua carreira na NBA</p>
+            </header>
+
+            <div class="section">
+                <h2>Informações Básicas</h2>
+                <div class="form-group">
+                    <label for="player-name">Nome do Jogador:</label>
+                    <input type="text" id="player-name" placeholder="Seu nome">
+                </div>
+
+                <div class="form-group">
+                    <label for="player-position">Posição:</label>
+                    <select id="player-position">
+                        <option value="PG">PG - Armador (Point Guard)</option>
+                        <option value="SG">SG - Ala-armador (Shooting Guard)</option>
+                        <option value="SF">SF - Ala (Small Forward)</option>
+                        <option value="PF">PF - Ala-pivô (Power Forward)</option>
+                        <option value="C">C - Pivô (Center)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Atributos</h2>
+                <p>Distribua 110 pontos entre os atributos abaixo:</p>
+                <div class="points-info">
+                    <span>Pontos Restantes: <span id="points-left">50</span></span>
+                    <div class="progress-bar">
+                        <div id="points-progress" class="progress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="attribute-sliders">
+                    <div class="form-group">
+                        <label for="shooting">Arremesso: <span id="shooting-value">10</span></label>
+                        <input type="range" id="shooting" min="0" max="20" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="defense">Defesa: <span id="defense-value">10</span></label>
+                        <input type="range" id="defense" min="0" max="20" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="athleticism">Atleticismo: <span id="athleticism-value">10</span></label>
+                        <input type="range" id="athleticism" min="0" max="20" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="playmaking">Passes: <span id="playmaking-value">10</span></label>
+                        <input type="range" id="playmaking" min="0" max="20" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="rebounding">Rebotes: <span id="rebounding-value">10</span></label>
+                        <input type="range" id="rebounding" min="0" max="20" value="10">
+                    </div>
+                </div>
+
+                <button id="create-btn" class="btn" disabled>Criar Jogador</button>
+            </div>
+        </div>
+
+        <!-- Tela de draft -->
+        <div id="draft-screen" class="screen hidden">
+            <header>
+                <h1>NBA Draft Day</h1>
+                <p>Veja qual time vai te escolher</p>
+            </header>
+
+            <div class="section draft-container">
+                <div class="draft-animation" id="draft-animation">
+                    <div class="logo-wheel-container">
+                        <img id="team-logo-wheel" class="team-logo-wheel hidden" src="" alt="Team Logo Wheel">
+                        <img id="team-logo" class="team-logo hidden" src="" alt="Team Logo">
+                    </div>
+                </div>
+
+                <div id="draft-result">
+                    <h2 id="draft-team-name">Time seleciona:</h2>
+                    <h3 id="draft-pick-number">Nome do Jogador - # escolha</h3>
+
+                    <div class="team-roster">
+                        <h3>Elenco do Time</h3>
+                        <div class="roster-header">
+                            <div class="roster-position">Pos</div>
+                            <div class="roster-name">Nome</div>
+                            <div class="roster-rating">OVR</div>
+                        </div>
+                        <div id="roster-players"></div>
+                    </div>
+                </div>
+
+                <div class="draft-buttons">
+                    <button id="continue-btn" class="btn hidden">Começar Temporada</button>
+                    <button id="playoffs-btn" class="btn btn-playoffs hidden">Ir Direto para os Playoffs</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel principal do jogador -->
+        <div id="player-dashboard" class="screen hidden">
+            <header>
+                <h1>NBA Career Simulator</h1>
+                <div id="season-info" class="season-info">Temporada 1</div>
+            </header>
+
+            <div class="dashboard-container">
+                <div class="section">
+                    <div class="player-card">
+                        <div class="player-info">
+                            <h2 id="player-full-name">Nome do Jogador</h2>
+                            <p id="player-team-info">Time - Posição</p>
+                            <p id="player-overall">Overall: <span>70</span></p>
+                        </div>
+                    </div>
+
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">PPG</div>
+                            <div id="ppg-stat" class="stat-value">0.0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">APG</div>
+                            <div id="apg-stat" class="stat-value">0.0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">RPG</div>
+                            <div id="rpg-stat" class="stat-value">0.0</div>
+                        </div>
+                    </div>
+
+                    <div class="season-progress-container">
+                        <p>Jogos disputados: <span id="games-played">0</span>/82</p>
+                        <div class="progress-bar">
+                            <div id="season-progress" class="progress" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="play-game-btn" class="btn">Jogar Partida</button>
+                        <button id="go-to-playoffs-btn" class="btn btn-playoffs hidden">Ir para os Playoffs</button>
+                    </div>
+
+                    <div class="skip-games-container">
+                        <h3>Pular Jogos</h3>
+                        <div class="skip-buttons">
+                            <button id="skip-5-btn" class="btn btn-skip">5 Jogos</button>
+                            <button id="skip-10-btn" class="btn btn-skip">10 Jogos</button>
+                            <div class="skip-controls">
+                                <input type="number" id="skip-custom-input" class="skip-input" min="1" max="82" value="20">
+                                <button id="skip-custom-btn" class="btn btn-skip">Jogos</button>
+                            </div>
+                            <button id="skip-to-playoffs-btn" class="btn btn-skip">Temporada Completa</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>Últimas Partidas</h2>
+                    <div id="games-list" class="games-list"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Companheiros de Equipe</h2>
+                    <div id="teammates-list" class="teammates-list"></div>
+                </div>
+
+                <div class="section">
+                    <h2>Conquistas Desbloqueadas</h2>
+                    <div id="achievements-list" class="achievements-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela de Playoffs -->
+        <div id="playoffs-screen" class="screen hidden">
+            <header>
+                <h1>NBA Playoffs</h1>
+                <div id="playoffs-info" class="season-info">Temporada 1 - Playoffs</div>
+            </header>
+
+            <div class="section">
+                <div id="champion-banner" class="champion-banner hidden">
+                    <h2>🏆 <span id="champion-team">Time</span> é o CAMPEÃO da NBA! 🏆</h2>
+                </div>
+
+                <div id="playoffs-bracket" class="playoffs-bracket"></div>
+
+                <div class="playoff-controls">
+                    <button id="simulate-playoff-game-btn" class="btn">Simular Próximo Jogo</button>
+                    <button id="next-season-btn" class="btn btn-season hidden">Próxima Temporada</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Galeria de Troféus -->
+        <div id="trophy-gallery" class="screen hidden">
+            <header>
+                <h1>Galeria de Troféus</h1>
+            </header>
+
+            <div class="section">
+                <div class="gallery-header">
+                    <h2>Seus Troféus e Conquistas</h2>
+                    <button id="back-to-dashboard-btn" class="btn">Voltar</button>
+                </div>
+
+                <div id="trophies-container" class="trophy-gallery"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+                

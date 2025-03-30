@@ -1,0 +1,2230 @@
+chat estou fazendo um simulador da NBA em html, css e java, tudo no mesmo codigo. porem quando no jogo passa dos playoffs da primeira temporada, na segunda ele repete o resultado do primeiro, acredito que o problema esteja no botao "ir para playoffs" e ao fato de o codigo resetar os playoffs e nao criar um novo, peco que arrume o botao e a cada temporada crie novos playoffs, me mande o codigo atualizado por favor. segue o codigo: <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Jogador NBA - Carreira Completa</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #1d428a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 5px solid #c8102e;
+        }
+
+        h1, h2, h3 {
+            margin-bottom: 15px;
+            color: #1d428a;
+        }
+
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #1d428a;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #c8102e;
+        }
+
+        .btn-playoffs {
+            background-color: #c8102e;
+        }
+
+        .btn-skip {
+            background-color: #ff9800;
+        }
+
+        .btn-season {
+            background-color: #4CAF50;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .player-info {
+            flex: 1;
+        }
+
+        .player-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background-color: #e9e9e9;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1d428a;
+        }
+
+        .games-list {
+            margin-top: 20px;
+        }
+
+        .game-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #1d428a;
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        .achievement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+        }
+
+        .achievement-icon {
+            margin-right: 10px;
+            font-size: 24px;
+            color: gold;
+        }
+
+        .draft-container {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .draft-animation {
+            font-size: 24px;
+            margin: 20px 0;
+            min-height: 60px;
+        }
+
+        .team-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+            transition: transform 0.3s;
+        }
+
+        .team-logo-wheel {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin: 10px auto;
+            display: block;
+            animation: spin 0.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .draft-result {
+            background-color: #1d428a;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .trophy-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .trophy-item {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .trophy-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+            color: gold;
+        }
+
+        .trophy-locked {
+            color: #ccc;
+        }
+
+        .trophy-count {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .playoff-series {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+        }
+
+        .series-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .series-games {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .game-result {
+            padding: 5px;
+            text-align: center;
+            border-radius: 3px;
+        }
+
+        .win {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .loss {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .pending {
+            background-color: #e0e0e0;
+        }
+
+        .champion-banner {
+            background-color: gold;
+            color: #1d428a;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .teammates-list {
+            margin-top: 15px;
+        }
+
+        .teammate {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .teammate-position {
+            width: 30px;
+            font-weight: bold;
+            color: #1d428a;
+        }
+
+        .teammate-name {
+            flex: 1;
+        }
+
+        .teammate-rating {
+            width: 50px;
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .skip-games-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-radius: 8px;
+        }
+
+        .skip-controls {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .skip-input {
+            width: 60px;
+            margin: 0 10px;
+            text-align: center;
+        }
+
+        .team-roster {
+            margin-top: 20px;
+        }
+
+        .roster-header {
+            font-weight: bold;
+            padding: 8px;
+            border-bottom: 2px solid #1d428a;
+            display: flex;
+        }
+
+        .roster-position {
+            width: 30px;
+        }
+
+        .roster-name {
+            flex: 1;
+        }
+
+        .roster-rating {
+            width: 50px;
+            text-align: right;
+        }
+
+        .season-info {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1d428a;
+        }
+
+        .logo-wheel-container {
+            position: relative;
+            height: 120px;
+            margin: 20px 0;
+        }
+
+        /* Estilos para o modal de histórico */
+        .history-modal {
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .history-modal .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .history-modal .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .season-history {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #1d428a;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Meu Jogador NBA</h1>
+            <p>Crie seu jogador, participe do draft e conquiste os playoffs!</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Criação do Jogador -->
+        <section id="create-player" class="section">
+            <h2>Crie Seu Jogador para o Draft</h2>
+            <div class="form-group">
+                <label for="player-name">Nome do Jogador:</label>
+                <input type="text" id="player-name" placeholder="Ex: LeBron James">
+            </div>
+            <div class="form-group">
+                <label for="player-position">Posição:</label>
+                <select id="player-position">
+                    <option value="PG">Armador (PG)</option>
+                    <option value="SG">Ala-armador (SG)</option>
+                    <option value="SF">Ala (SF)</option>
+                    <option value="PF">Ala-pivô (PF)</option>
+                    <option value="C">Pivô (C)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Atributos (Distribua 50 pontos):</label>
+                <div class="stat-item">
+                    <label for="shooting">Arremesso</label>
+                    <input type="range" id="shooting" min="5" max="20" value="10">
+                    <span id="shooting-value">10</span>
+                </div>
+                <div class="stat-item">
+                    <label for="defense">Defesa</label>
+                    <input type="range" id="defense" min="5" max="20" value="10">
+                    <span id="defense-value">10</span>
+                </div>
+                <div class="stat-item">
+                    <label for="athleticism">Atletismo</label>
+                    <input type="range" id="athleticism" min="5" max="20" value="10">
+                    <span id="athleticism-value">10</span>
+                </div>
+                <div class="stat-item">
+                    <label for="playmaking">Criação de Jogadas</label>
+                    <input type="range" id="playmaking" min="5" max="20" value="10">
+                    <span id="playmaking-value">10</span>
+                </div>
+                <div class="stat-item">
+                    <label for="rebounding">Rebotes</label>
+                    <input type="range" id="rebounding" min="5" max="20" value="10">
+                    <span id="rebounding-value">10</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="points-progress"></div>
+                </div>
+                <p>Pontos restantes: <span id="points-left">10</span></p>
+            </div>
+            <button class="btn" id="create-btn">Participar do Draft</button>
+        </section>
+
+        <!-- Tela do Draft -->
+        <section id="draft-screen" class="section hidden">
+            <div class="draft-container">
+                <h2>Draft da NBA</h2>
+                <p>Seu jogador está participando do draft da NBA!</p>
+                <p>Aguarde enquanto os times fazem suas escolhas...</p>
+                
+                <div class="draft-animation" id="draft-animation">
+                    Os comissários estão analisando os prospectos...
+                </div>
+                
+                <div class="logo-wheel-container">
+                    <img id="team-logo-wheel" class="team-logo-wheel hidden" src="" alt="Logo do Time">
+                    <img id="team-logo" class="team-logo hidden" src="" alt="Logo do Time">
+                </div>
+                
+                <div class="draft-result" id="draft-result">
+                    <h3 id="draft-team-name"></h3>
+                    <p id="draft-pick-number"></p>
+                    <div class="team-roster" id="team-roster">
+                        <div class="roster-header">
+                            <div class="roster-position">Pos</div>
+                            <div class="roster-name">Jogador</div>
+                            <div class="roster-rating">OVR</div>
+                        </div>
+                        <div id="roster-players"></div>
+                    </div>
+                </div>
+                
+                <button class="btn hidden" id="continue-btn">Começar Temporada</button>
+                <button class="btn btn-playoffs hidden" id="playoffs-btn">Ir Direto para os Playoffs</button>
+            </div>
+        </section>
+
+        <!-- Painel do Jogador -->
+        <section id="player-dashboard" class="section hidden">
+            <div class="season-info" id="season-info">
+                Temporada 1
+            </div>
+            
+            <div class="player-card">
+                <div class="player-info">
+                    <h2 id="player-full-name">Nome do Jogador</h2>
+                    <p id="player-team-info">Time - Posição</p>
+                    <p id="player-overall">Overall: <span>70</span></p>
+                    
+                    <div class="player-stats">
+                        <div class="stat-item">
+                            <div>PPG</div>
+                            <div class="stat-value" id="ppg-stat">0.0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div>APG</div>
+                            <div class="stat-value" id="apg-stat">0.0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div>RPG</div>
+                            <div class="stat-value" id="rpg-stat">0.0</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn" id="play-game-btn">Jogar Partida</button>
+                    <button class="btn btn-playoffs" id="go-to-playoffs-btn">Ir para Playoffs</button>
+                    <button class="btn" id="view-history-btn">Ver Histórico</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Progresso da Temporada</h3>
+                <p>Jogos: <span id="games-played">0</span>/82</p>
+                <div class="progress-bar">
+                    <div class="progress" id="season-progress"></div>
+                </div>
+
+                <div class="skip-games-container">
+                    <h4>Pular Jogos</h4>
+                    <p>Avance rapidamente pela temporada</p>
+                    <div class="skip-controls">
+                        <button class="btn btn-skip" id="skip-5-btn">+5</button>
+                        <button class="btn btn-skip" id="skip-10-btn">+10</button>
+                        <input type="number" class="skip-input" id="skip-custom-input" min="1" max="82" value="5">
+                        <button class="btn btn-skip" id="skip-custom-btn">Pular</button>
+                        <button class="btn btn-skip" id="skip-to-playoffs-btn">Ir para Playoffs</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Companheiros de Equipe</h3>
+                <div class="teammates-list" id="teammates-list">
+                    <!-- Lista de companheiros será preenchida dinamicamente -->
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>Últimas Partidas</h3>
+                <div class="games-list" id="games-list"></div>
+            </div>
+
+            <div class="section">
+                <h3>Conquistas</h3>
+                <div id="achievements-list"></div>
+            </div>
+        </section>
+
+        <!-- Tela de Playoffs -->
+        <section id="playoffs-screen" class="section hidden">
+            <div class="season-info" id="playoffs-season-info">
+                Temporada <span id="current-season-number">1</span> - Playoffs
+            </div>
+            <h2>Playoffs da NBA</h2>
+            <div id="playoffs-bracket"></div>
+            <button class="btn" id="simulate-playoff-game-btn">Simular Próximo Jogo</button>
+            <button class="btn btn-season" id="next-season-btn" style="display: none;">Próxima Temporada</button>
+            
+            <div id="champion-banner" class="champion-banner hidden">
+                <h2>CAMPEÕES DA NBA!</h2>
+                <p id="champion-team"></p>
+            </div>
+        </section>
+
+        <!-- Galeria de Troféus -->
+        <section id="trophy-gallery" class="section hidden">
+            <h2>Galeria de Troféus</h2>
+            <div class="trophy-gallery" id="trophies-container">
+                <!-- Troféus serão adicionados dinamicamente -->
+            </div>
+            <button class="btn" id="back-to-dashboard-btn">Voltar ao Painel</button>
+        </section>
+    </div>
+
+    <script>
+        // Dados do jogador
+        const player = {
+            name: "",
+            position: "",
+            team: "",
+            stats: {
+                shooting: 0,
+                defense: 0,
+                athleticism: 0,
+                playmaking: 0,
+                rebounding: 0
+            },
+            seasonStats: {
+                gamesPlayed: 0,
+                points: 0,
+                assists: 0,
+                rebounds: 0,
+                games: [],
+                playoffGames: 0,
+                playoffWins: 0,
+                playoffLosses: 0
+            },
+            careerStats: {
+                seasons: [],
+                totalPoints: 0,
+                totalGames: 0,
+                championships: 0
+            },
+            achievements: [],
+            draftPick: 0,
+            playoffsHistory: [], // Histórico de playoffs
+            currentSeasonPlayoffs: null, // Playoffs da temporada atual (separado do histórico)
+            currentPlayoffRound: 0,
+            trophies: [],
+            teammates: [],
+            currentSeason: 1,
+            trophyCounts: {},
+            overall: 70 // Overall inicial fixo em 70
+        };
+
+        // Times da NBA com logos e elencos reais (2023)
+        const teams = {
+            "ATL": { 
+                name: "Atlanta Hawks", 
+                conference: "East", 
+                logo: "https://cdn.nba.com/logos/nba/1610612737/primary/L/logo.svg",
+                roster: [
+                    { name: "Trae Young", position: "PG", secondaryPosition: "SG", overall: 89 },
+                    { name: "Dejounte Murray", position: "SG", secondaryPosition: "PG", overall: 84 },
+                    { name: "Bogdan Bogdanovic", position: "SG", secondaryPosition: "SF", overall: 78 },
+                    { name: "De'Andre Hunter", position: "SF", secondaryPosition: "PF", overall: 79 },
+                    { name: "John Collins", position: "PF", secondaryPosition: "C", overall: 80 },
+                    { name: "Clint Capela", position: "C", secondaryPosition: "", overall: 82 }
+                ]
+            },
+            "BOS": { 
+                name: "Boston Celtics", 
+                conference: "East", 
+                logo: "https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg",
+                roster: [
+                    { name: "Marcus Smart", position: "PG", secondaryPosition: "SG", overall: 82 },
+                    { name: "Jaylen Brown", position: "SG", secondaryPosition: "SF", overall: 88 },
+                    { name: "Jayson Tatum", position: "SF", secondaryPosition: "PF", overall: 93 },
+                    { name: "Al Horford", position: "PF", secondaryPosition: "C", overall: 82 },
+                    { name: "Robert Williams", position: "C", secondaryPosition: "", overall: 84 }
+                ]
+            },
+            "BKN": {
+                name: "Brooklyn Nets",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612751/primary/L/logo.svg",
+                roster: [
+                    { name: "Kyrie Irving", position: "PG", secondaryPosition: "SG", overall: 89 },
+                    { name: "Ben Simmons", position: "PG", secondaryPosition: "PF", overall: 79 },
+                    { name: "Joe Harris", position: "SG", secondaryPosition: "SF", overall: 76 },
+                    { name: "Kevin Durant", position: "SF", secondaryPosition: "PF", overall: 96 },
+                    { name: "Nic Claxton", position: "C", secondaryPosition: "", overall: 80 }
+                ]
+            },
+            "CHA": {
+                name: "Charlotte Hornets",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612766/primary/L/logo.svg",
+                roster: [
+                    { name: "LaMelo Ball", position: "PG", secondaryPosition: "SG", overall: 86 },
+                    { name: "Terry Rozier", position: "SG", secondaryPosition: "PG", overall: 80 },
+                    { name: "Gordon Hayward", position: "SF", secondaryPosition: "PF", overall: 80 },
+                    { name: "P.J. Washington", position: "PF", secondaryPosition: "C", overall: 78 },
+                    { name: "Mason Plumlee", position: "C", secondaryPosition: "", overall: 77 }
+                ]
+            },
+            "CHI": {
+                name: "Chicago Bulls",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612741/primary/L/logo.svg",
+                roster: [
+                    { name: "Lonzo Ball", position: "PG", secondaryPosition: "SG", overall: 82 },
+                    { name: "Zach LaVine", position: "SG", secondaryPosition: "SF", overall: 87 },
+                    { name: "DeMar DeRozan", position: "SF", secondaryPosition: "PF", overall: 89 },
+                    { name: "Patrick Williams", position: "PF", secondaryPosition: "SF", overall: 77 },
+                    { name: "Nikola Vucevic", position: "C", secondaryPosition: "", overall: 84 }
+                ]
+            },
+            "CLE": {
+                name: "Cleveland Cavaliers",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612739/primary/L/logo.svg",
+                roster: [
+                    { name: "Darius Garland", position: "PG", secondaryPosition: "SG", overall: 87 },
+                    { name: "Donovan Mitchell", position: "SG", secondaryPosition: "PG", overall: 90 },
+                    { name: "Caris LeVert", position: "SF", secondaryPosition: "SG", overall: 78 },
+                    { name: "Evan Mobley", position: "PF", secondaryPosition: "C", overall: 85 },
+                    { name: "Jarrett Allen", position: "C", secondaryPosition: "", overall: 85 }
+                ]
+            },
+            "DAL": {
+                name: "Dallas Mavericks",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612742/primary/L/logo.svg",
+                roster: [
+                    { name: "Luka Doncic", position: "PG", secondaryPosition: "SF", overall: 95 },
+                    { name: "Spencer Dinwiddie", position: "SG", secondaryPosition: "PG", overall: 80 },
+                    { name: "Tim Hardaway Jr.", position: "SF", secondaryPosition: "SG", overall: 78 },
+                    { name: "Dorian Finney-Smith", position: "PF", secondaryPosition: "SF", overall: 78 },
+                    { name: "Christian Wood", position: "C", secondaryPosition: "PF", overall: 83 }
+                ]
+            },
+            "DEN": {
+                name: "Denver Nuggets",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg",
+                roster: [
+                    { name: "Jamal Murray", position: "PG", secondaryPosition: "SG", overall: 84 },
+                    { name: "Kentavious Caldwell-Pope", position: "SG", secondaryPosition: "SF", overall: 78 },
+                    { name: "Michael Porter Jr.", position: "SF", secondaryPosition: "PF", overall: 82 },
+                    { name: "Aaron Gordon", position: "PF", secondaryPosition: "SF", overall: 81 },
+                    { name: "Nikola Jokic", position: "C", secondaryPosition: "", overall: 97 }
+                ]
+            },
+            "DET": {
+                name: "Detroit Pistons",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612765/primary/L/logo.svg",
+                roster: [
+                    { name: "Cade Cunningham", position: "PG", secondaryPosition: "SG", overall: 84 },
+                    { name: "Jaden Ivey", position: "SG", secondaryPosition: "PG", overall: 78 },
+                    { name: "Bojan Bogdanovic", position: "SF", secondaryPosition: "PF", overall: 80 },
+                    { name: "Isaiah Stewart", position: "PF", secondaryPosition: "C", overall: 76 },
+                    { name: "Jalen Duren", position: "C", secondaryPosition: "", overall: 75 }
+                ]
+            },
+            "GSW": { 
+                name: "Golden State Warriors", 
+                conference: "West", 
+                logo: "https://cdn.nba.com/logos/nba/1610612744/primary/L/logo.svg",
+                roster: [
+                    { name: "Stephen Curry", position: "PG", secondaryPosition: "SG", overall: 96 },
+                    { name: "Klay Thompson", position: "SG", secondaryPosition: "SF", overall: 83 },
+                    { name: "Andrew Wiggins", position: "SF", secondaryPosition: "PF", overall: 84 },
+                    { name: "Draymond Green", position: "PF", secondaryPosition: "C", overall: 83 },
+                    { name: "Kevon Looney", position: "C", secondaryPosition: "", overall: 79 }
+                ]
+            },
+            "HOU": {
+                name: "Houston Rockets",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612745/primary/L/logo.svg",
+                roster: [
+                    { name: "Kevin Porter Jr.", position: "PG", secondaryPosition: "SG", overall: 77 },
+                    { name: "Jalen Green", position: "SG", secondaryPosition: "SF", overall: 82 },
+                    { name: "Eric Gordon", position: "SF", secondaryPosition: "SG", overall: 76 },
+                    { name: "Jabari Smith Jr.", position: "PF", secondaryPosition: "C", overall: 78 },
+                    { name: "Alperen Sengun", position: "C", secondaryPosition: "", overall: 79 }
+                ]
+            },
+            "IND": {
+                name: "Indiana Pacers",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612754/primary/L/logo.svg",
+                roster: [
+                    { name: "Tyrese Haliburton", position: "PG", secondaryPosition: "SG", overall: 86 },
+                    { name: "Buddy Hield", position: "SG", secondaryPosition: "SF", overall: 80 },
+                    { name: "Chris Duarte", position: "SF", secondaryPosition: "SG", overall: 76 },
+                    { name: "Jalen Smith", position: "PF", secondaryPosition: "C", overall: 77 },
+                    { name: "Myles Turner", position: "C", secondaryPosition: "", overall: 83 }
+                ]
+            },
+            "LAC": {
+                name: "LA Clippers",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612746/primary/L/logo.svg",
+                roster: [
+                    { name: "John Wall", position: "PG", secondaryPosition: "SG", overall: 78 },
+                    { name: "Paul George", position: "SG", secondaryPosition: "SF", overall: 88 },
+                    { name: "Kawhi Leonard", position: "SF", secondaryPosition: "PF", overall: 94 },
+                    { name: "Marcus Morris Sr.", position: "PF", secondaryPosition: "SF", overall: 78 },
+                    { name: "Ivica Zubac", position: "C", secondaryPosition: "", overall: 80 }
+                ]
+            },
+            "LAL": { 
+                name: "Los Angeles Lakers", 
+                conference: "West", 
+                logo: "https://cdn.nba.com/logos/nba/1610612747/primary/L/logo.svg",
+                roster: [
+                    { name: "Russell Westbrook", position: "PG", secondaryPosition: "SG", overall: 78 },
+                    { name: "Patrick Beverley", position: "PG", secondaryPosition: "SG", overall: 76 },
+                    { name: "Austin Reaves", position: "SG", secondaryPosition: "SF", overall: 75 },
+                    { name: "LeBron James", position: "SF", secondaryPosition: "PF", overall: 96 },
+                    { name: "Anthony Davis", position: "PF", secondaryPosition: "C", overall: 90 },
+                    { name: "Thomas Bryant", position: "C", secondaryPosition: "", overall: 77 }
+                ]
+            },
+            "MEM": {
+                name: "Memphis Grizzlies",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612763/primary/L/logo.svg",
+                roster: [
+                    { name: "Ja Morant", position: "PG", secondaryPosition: "SG", overall: 93 },
+                    { name: "Desmond Bane", position: "SG", secondaryPosition: "SF", overall: 84 },
+                    { name: "Dillon Brooks", position: "SF", secondaryPosition: "SG", overall: 78 },
+                    { name: "Jaren Jackson Jr.", position: "PF", secondaryPosition: "C", overall: 85 },
+                    { name: "Steven Adams", position: "C", secondaryPosition: "", overall: 80 }
+                ]
+            },
+            "MIA": {
+                name: "Miami Heat",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612748/primary/L/logo.svg",
+                roster: [
+                    { name: "Kyle Lowry", position: "PG", secondaryPosition: "SG", overall: 80 },
+                    { name: "Tyler Herro", position: "SG", secondaryPosition: "PG", overall: 86 },
+                    { name: "Jimmy Butler", position: "SF", secondaryPosition: "PF", overall: 91 },
+                    { name: "Caleb Martin", position: "PF", secondaryPosition: "SF", overall: 76 },
+                    { name: "Bam Adebayo", position: "C", secondaryPosition: "PF", overall: 87 }
+                ]
+            },
+            "MIL": {
+                name: "Milwaukee Bucks",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612749/primary/L/logo.svg",
+                roster: [
+                    { name: "Jrue Holiday", position: "PG", secondaryPosition: "SG", overall: 86 },
+                    { name: "Grayson Allen", position: "SG", secondaryPosition: "SF", overall: 76 },
+                    { name: "Khris Middleton", position: "SF", secondaryPosition: "PF", overall: 87 },
+                    { name: "Giannis Antetokounmpo", position: "PF", secondaryPosition: "C", overall: 97 },
+                    { name: "Brook Lopez", position: "C", secondaryPosition: "", overall: 82 }
+                ]
+            },
+            "MIN": {
+                name: "Minnesota Timberwolves",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612750/primary/L/logo.svg",
+                roster: [
+                    { name: "D'Angelo Russell", position: "PG", secondaryPosition: "SG", overall: 82 },
+                    { name: "Anthony Edwards", position: "SG", secondaryPosition: "SF", overall: 86 },
+                    { name: "Jaden McDaniels", position: "SF", secondaryPosition: "PF", overall: 77 },
+                    { name: "Karl-Anthony Towns", position: "PF", secondaryPosition: "C", overall: 89 },
+                    { name: "Rudy Gobert", position: "C", secondaryPosition: "", overall: 88 }
+                ]
+            },
+            "NOP": {
+                name: "New Orleans Pelicans",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612740/primary/L/logo.svg",
+                roster: [
+                    { name: "CJ McCollum", position: "PG", secondaryPosition: "SG", overall: 85 },
+                    { name: "Brandon Ingram", position: "SG", secondaryPosition: "SF", overall: 86 },
+                    { name: "Herbert Jones", position: "SF", secondaryPosition: "PF", overall: 78 },
+                    { name: "Zion Williamson", position: "PF", secondaryPosition: "SF", overall: 89 },
+                    { name: "Jonas Valanciunas", position: "C", secondaryPosition: "", overall: 82 }
+                ]
+            },
+            "NYK": {
+                name: "New York Knicks",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612752/primary/L/logo.svg",
+                roster: [
+                    { name: "Jalen Brunson", position: "PG", secondaryPosition: "SG", overall: 85 },
+                    { name: "RJ Barrett", position: "SG", secondaryPosition: "SF", overall: 82 },
+                    { name: "Evan Fournier", position: "SF", secondaryPosition: "SG", overall: 76 },
+                    { name: "Julius Randle", position: "PF", secondaryPosition: "C", overall: 84 },
+                    { name: "Mitchell Robinson", position: "C", secondaryPosition: "", overall: 82 }
+                ]
+            },
+            "OKC": {
+                name: "Oklahoma City Thunder",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612760/primary/L/logo.svg",
+                roster: [
+                    { name: "Shai Gilgeous-Alexander", position: "PG", secondaryPosition: "SG", overall: 90 },
+                    { name: "Josh Giddey", position: "SG", secondaryPosition: "SF", overall: 80 },
+                    { name: "Luguentz Dort", position: "SF", secondaryPosition: "SG", overall: 78 },
+                    { name: "Darius Bazley", position: "PF", secondaryPosition: "SF", overall: 75 },
+                    { name: "Aleksej Pokusevski", position: "C", secondaryPosition: "PF", overall: 74 }
+                ]
+            },
+            "ORL": {
+                name: "Orlando Magic",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612753/primary/L/logo.svg",
+                roster: [
+                    { name: "Markelle Fultz", position: "PG", secondaryPosition: "SG", overall: 76 },
+                    { name: "Jalen Suggs", position: "SG", secondaryPosition: "PG", overall: 75 },
+                    { name: "Franz Wagner", position: "SF", secondaryPosition: "PF", overall: 80 },
+                    { name: "Paolo Banchero", position: "PF", secondaryPosition: "SF", overall: 82 },
+                    { name: "Wendell Carter Jr.", position: "C", secondaryPosition: "", overall: 82 }
+                ]
+            },
+            "PHI": {
+                name: "Philadelphia 76ers",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612755/primary/L/logo.svg",
+                roster: [
+                    { name: "James Harden", position: "PG", secondaryPosition: "SG", overall: 89 },
+                    { name: "Tyrese Maxey", position: "SG", secondaryPosition: "PG", overall: 85 },
+                    { name: "Tobias Harris", position: "SF", secondaryPosition: "PF", overall: 82 },
+                    { name: "P.J. Tucker", position: "PF", secondaryPosition: "SF", overall: 76 },
+                    { name: "Joel Embiid", position: "C", secondaryPosition: "", overall: 96 }
+                ]
+            },
+            "PHX": {
+                name: "Phoenix Suns",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612756/primary/L/logo.svg",
+                roster: [
+                    { name: "Chris Paul", position: "PG", secondaryPosition: "SG", overall: 85 },
+                    { name: "Devin Booker", position: "SG", secondaryPosition: "SF", overall: 91 },
+                    { name: "Mikal Bridges", position: "SF", secondaryPosition: "PF", overall: 83 },
+                    { name: "Cameron Johnson", position: "PF", secondaryPosition: "SF", overall: 80 },
+                    { name: "Deandre Ayton", position: "C", secondaryPosition: "", overall: 86 }
+                ]
+            },
+            "POR": {
+                name: "Portland Trail Blazers",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612757/primary/L/logo.svg",
+                roster: [
+                    { name: "Damian Lillard", position: "PG", secondaryPosition: "SG", overall: 90 },
+                    { name: "Anfernee Simons", position: "SG", secondaryPosition: "PG", overall: 82 },
+                    { name: "Josh Hart", position: "SF", secondaryPosition: "SG", overall: 78 },
+                    { name: "Jerami Grant", position: "PF", secondaryPosition: "SF", overall: 82 },
+                    { name: "Jusuf Nurkic", position: "C", secondaryPosition: "", overall: 81 }
+                ]
+            },
+            "SAC": {
+                name: "Sacramento Kings",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612758/primary/L/logo.svg",
+                roster: [
+                    { name: "De'Aaron Fox", position: "PG", secondaryPosition: "SG", overall: 86 },
+                    { name: "Kevin Huerter", position: "SG", secondaryPosition: "SF", overall: 78 },
+                    { name: "Harrison Barnes", position: "SF", secondaryPosition: "PF", overall: 80 },
+                    { name: "Keegan Murray", position: "PF", secondaryPosition: "SF", overall: 78 },
+                    { name: "Domantas Sabonis", position: "C", secondaryPosition: "PF", overall: 87 }
+                ]
+            },
+            "SAS": {
+                name: "San Antonio Spurs",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612759/primary/L/logo.svg",
+                roster: [
+                    { name: "Tre Jones", position: "PG", secondaryPosition: "SG", overall: 76 },
+                    { name: "Devin Vassell", position: "SG", secondaryPosition: "SF", overall: 80 },
+                    { name: "Keldon Johnson", position: "SF", secondaryPosition: "PF", overall: 82 },
+                    { name: "Jeremy Sochan", position: "PF", secondaryPosition: "SF", overall: 75 },
+                    { name: "Jakob Poeltl", position: "C", secondaryPosition: "", overall: 82 }
+                ]
+            },
+            "TOR": {
+                name: "Toronto Raptors",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612761/primary/L/logo.svg",
+                roster: [
+                    { name: "Fred VanVleet", position: "PG", secondaryPosition: "SG", overall: 85 },
+                    { name: "Gary Trent Jr.", position: "SG", secondaryPosition: "SF", overall: 78 },
+                    { name: "OG Anunoby", position: "SF", secondaryPosition: "PF", overall: 83 },
+                    { name: "Pascal Siakam", position: "PF", secondaryPosition: "SF", overall: 87 },
+                    { name: "Scottie Barnes", position: "C", secondaryPosition: "SF", overall: 84 }
+                ]
+            },
+            "UTA": {
+                name: "Utah Jazz",
+                conference: "West",
+                logo: "https://cdn.nba.com/logos/nba/1610612762/primary/L/logo.svg",
+                roster: [
+                    { name: "Mike Conley", position: "PG", secondaryPosition: "SG", overall: 80 },
+                    { name: "Jordan Clarkson", position: "SG", secondaryPosition: "SF", overall: 82 },
+                    { name: "Lauri Markkanen", position: "SF", secondaryPosition: "PF", overall: 84 },
+                    { name: "Jarred Vanderbilt", position: "PF", secondaryPosition: "C", overall: 77 },
+                    { name: "Walker Kessler", position: "C", secondaryPosition: "", overall: 78 }
+                ]
+            },
+            "WAS": {
+                name: "Washington Wizards",
+                conference: "East",
+                logo: "https://cdn.nba.com/logos/nba/1610612764/primary/L/logo.svg",
+                roster: [
+                    { name: "Monte Morris", position: "PG", secondaryPosition: "SG", overall: 78 },
+                    { name: "Bradley Beal", position: "SG", secondaryPosition: "SF", overall: 87 },
+                    { name: "Kyle Kuzma", position: "SF", secondaryPosition: "PF", overall: 82 },
+                    { name: "Kristaps Porzingis", position: "PF", secondaryPosition: "C", overall: 85 },
+                    { name: "Daniel Gafford", position: "C", secondaryPosition: "", overall: 78 }
+                ]
+            }
+        };
+
+        // Conquistas possíveis
+        const allAchievements = [
+            { id: "first-game", name: "Estreia na NBA", description: "Jogou sua primeira partida na NBA", earned: false },
+            { id: "first-points", name: "Primeiros Pontos", description: "Marcou seus primeiros pontos na NBA", earned: false },
+            { id: "double-double", name: "Duplo-Duplo", description: "Conseguiu um duplo-duplo em uma partida", earned: false },
+            { id: "30-points", name: "30 Pontos", description: "Marcou 30 pontos em uma partida", earned: false },
+            { id: "10-assists", name: "10 Assistências", description: "Registrou 10 assistências em uma partida", earned: false },
+            { id: "drafted", name: "Draftado", description: "Foi selecionado no draft da NBA", earned: false },
+            { id: "lottery-pick", name: "Lottery Pick", description: "Foi selecionado entre as 14 primeiras escolhas do draft", earned: false },
+            { id: "playoff-berth", name: "Classificado para os Playoffs", description: "Seu time se classificou para os playoffs", earned: false },
+            { id: "playoff-win", name: "Vitória nos Playoffs", description: "Ganhou sua primeira partida nos playoffs", earned: false },
+            { id: "series-win", name: "Venceu uma Série", description: "Venceu uma série nos playoffs", earned: false },
+            { id: "conference-finals", name: "Finais de Conferência", description: "Chegou às finais de conferência", earned: false },
+            { id: "nba-finals", name: "Finais da NBA", description: "Chegou às finais da NBA", earned: false },
+            { id: "champion", name: "Campeão da NBA", description: "Venceu o campeonato da NBA", earned: false }
+        ];
+
+        // Troféus disponíveis
+        const allTrophies = [
+            { id: "mvp", name: "MVP", description: "Jogador Mais Valioso da Temporada", earned: false },
+            { id: "fmvp", name: "MVP das Finais", description: "Jogador Mais Valioso das Finais", earned: false },
+            { id: "scoring-champ", name: "Artilheiro", description: "Líder da liga em pontuação", earned: false },
+            { id: "all-star", name: "All-Star", description: "Selecionado para o All-Star Game", earned: false },
+            { id: "all-nba", name: "All-NBA Team", description: "Selecionado para um dos times All-NBA", earned: false },
+            { id: "rookie-year", name: "Calouro do Ano", description: "Eleito o melhor calouro da temporada", earned: false },
+            { id: "dpoy", name: "Defensor do Ano", description: "Eleito o melhor defensor da temporada", earned: false },
+            { id: "sixth-man", name: "Sexto Homem", description: "Eleito o melhor reserva da temporada", earned: false }
+        ];
+
+        // Inicializa o simulador
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa contagem de troféus
+            initializeTrophyCounts();
+            
+            // Configura os sliders de atributos
+            setupAttributeSliders();
+            
+            // Configura o botão de criar jogador
+            document.getElementById('create-btn').addEventListener('click', startDraft);
+            
+            // Configura o botão de jogar partida
+            document.getElementById('play-game-btn').addEventListener('click', playGame);
+            
+            // Configura o botão de continuar após o draft
+            document.getElementById('continue-btn').addEventListener('click', startSeason);
+            
+            // Configura o botão de ir direto para os playoffs
+            document.getElementById('playoffs-btn').addEventListener('click', goToPlayoffs);
+            
+            // Configura o botão de ir para os playoffs durante a temporada
+            document.getElementById('go-to-playoffs-btn').addEventListener('click', goToPlayoffs);
+            
+            // Configura o botão de simular jogo dos playoffs
+            document.getElementById('simulate-playoff-game-btn').addEventListener('click', simulatePlayoffGame);
+            
+            // Configura o botão de próxima temporada
+            document.getElementById('next-season-btn').addEventListener('click', startNewSeason);
+            
+            // Configura o botão para ver a galeria de troféus
+            document.getElementById('back-to-dashboard-btn').addEventListener('click', backToDashboard);
+            
+            // Configura o botão para ver o histórico
+            document.getElementById('view-history-btn').addEventListener('click', viewPlayoffsHistory);
+            
+            // Configura os botões de pular jogos
+            document.getElementById('skip-5-btn').addEventListener('click', () => skipGames(5));
+            document.getElementById('skip-10-btn').addEventListener('click', () => skipGames(10));
+            document.getElementById('skip-custom-btn').addEventListener('click', () => {
+                const gamesToSkip = parseInt(document.getElementById('skip-custom-input').value);
+                skipGames(gamesToSkip);
+            });
+            document.getElementById('skip-to-playoffs-btn').addEventListener('click', () => {
+                const remainingGames = 82 - player.seasonStats.gamesPlayed;
+                if (remainingGames > 0) {
+                    skipGames(remainingGames);
+                }
+                goToPlayoffs();
+            });
+        });
+
+        // Inicializa a contagem de troféus
+        function initializeTrophyCounts() {
+            allTrophies.forEach(trophy => {
+                player.trophyCounts[trophy.id] = 0;
+            });
+        }
+
+        // Configura os sliders de atributos
+        function setupAttributeSliders() {
+            const sliders = [
+                { id: "shooting", valueId: "shooting-value" },
+                { id: "defense", valueId: "defense-value" },
+                { id: "athleticism", valueId: "athleticism-value" },
+                { id: "playmaking", valueId: "playmaking-value" },
+                { id: "rebounding", valueId: "rebounding-value" }
+            ];
+
+            sliders.forEach(slider => {
+                const sliderElement = document.getElementById(slider.id);
+                const valueElement = document.getElementById(slider.valueId);
+
+                sliderElement.addEventListener('input', function() {
+                    valueElement.textContent = this.value;
+                    updatePointsLeft();
+                });
+            });
+        }
+
+        // Atualiza os pontos restantes
+        function updatePointsLeft() {
+            const shooting = parseInt(document.getElementById('shooting').value);
+            const defense = parseInt(document.getElementById('defense').value);
+            const athleticism = parseInt(document.getElementById('athleticism').value);
+            const playmaking = parseInt(document.getElementById('playmaking').value);
+            const rebounding = parseInt(document.getElementById('rebounding').value);
+
+            const total = shooting + defense + athleticism + playmaking + rebounding;
+            const pointsLeft = 50 - total;
+
+            document.getElementById('points-left').textContent = pointsLeft;
+            document.getElementById('points-progress').style.width = `${(total / 50) * 100}%`;
+
+            // Desabilita o botão se não tiver distribuído todos os pontos
+            document.getElementById('create-btn').disabled = pointsLeft !== 0;
+        }
+
+        // Inicia o processo de draft
+        function startDraft() {
+            player.name = document.getElementById('player-name').value;
+            player.position = document.getElementById('player-position').value;
+
+            player.stats = {
+                shooting: parseInt(document.getElementById('shooting').value),
+                defense: parseInt(document.getElementById('defense').value),
+                athleticism: parseInt(document.getElementById('athleticism').value),
+                playmaking: parseInt(document.getElementById('playmaking').value),
+                rebounding: parseInt(document.getElementById('rebounding').value)
+            };
+
+            // Define o overall inicial como 70
+            player.overall = 70;
+
+            // Mostra a tela de draft
+            document.getElementById('create-player').classList.add('hidden');
+            document.getElementById('draft-screen').classList.remove('hidden');
+
+            // Inicia a animação do draft
+            simulateDraft();
+        }
+
+        // Simula o processo de draft
+        function simulateDraft() {
+            const draftAnimation = document.getElementById('draft-animation');
+            const teamLogoWheel = document.getElementById('team-logo-wheel');
+            const teamLogo = document.getElementById('team-logo');
+            const draftResult = document.getElementById('draft-result');
+            const continueBtn = document.getElementById('continue-btn');
+            const playoffsBtn = document.getElementById('playoffs-btn');
+            
+            // Mostra a roleta girando
+            teamLogoWheel.src = "https://cdn.nba.com/logos/nba/1610612737/primary/L/logo.svg";
+            teamLogoWheel.classList.remove('hidden');
+            
+            // Esconde o resultado e botões
+            draftResult.style.display = 'none';
+            continueBtn.classList.add('hidden');
+            playoffsBtn.classList.add('hidden');
+            
+            // Calcula a posição no draft (1-30)
+            let draftPosition;
+            
+            // Baseado no overall do jogador (70 é a média)
+            if (player.overall >= 80) {
+                // Top 5 pick
+                draftPosition = Math.floor(Math.random() * 5) + 1;
+            } else if (player.overall >= 75) {
+                // Lottery pick (1-14)
+                draftPosition = Math.floor(Math.random() * 14) + 1;
+            } else if (player.overall >= 70) {
+                // Mid first round (15-20)
+                draftPosition = Math.floor(Math.random() * 6) + 15;
+            } else {
+                // Late first round or second round (21-30)
+                draftPosition = Math.floor(Math.random() * 10) + 21;
+            }
+            
+            // Garante que está entre 1 e 30
+            draftPosition = Math.max(1, Math.min(30, draftPosition));
+            player.draftPick = draftPosition;
+            
+            // Lista de todos os times
+            const teamCodes = Object.keys(teams);
+            
+            // Seleciona um time aleatório (simplificado - na realidade, a ordem do draft é fixa)
+            const selectedTeamCode = teamCodes[Math.floor(Math.random() * teamCodes.length)];
+            player.team = selectedTeamCode;
+            
+            // Animação do draft com roleta de logos
+            const teamCodesArray = Object.keys(teams);
+            let currentLogoIndex = 0;
+            let spinCount = 0;
+            const maxSpinCount = 20; // Número de mudanças de logo antes de parar
+            const spinInterval = 100; // Intervalo em ms
+            
+            const spinIntervalId = setInterval(() => {
+                // Muda o logo
+                teamLogoWheel.src = teams[teamCodesArray[currentLogoIndex]].logo;
+                currentLogoIndex = (currentLogoIndex + 1) % teamCodesArray.length;
+                spinCount++;
+                
+                // Para a roleta após algumas voltas e mostra o time escolhido
+                if (spinCount >= maxSpinCount) {
+                    clearInterval(spinIntervalId);
+                    
+                    // Para no time escolhido
+                    teamLogoWheel.classList.add('hidden');
+                    teamLogo.src = teams[selectedTeamCode].logo;
+                    teamLogo.classList.remove('hidden');
+                    
+                    // Mostra o resultado do draft
+                    showDraftResult(selectedTeamCode, draftPosition);
+                }
+            }, spinInterval);
+        }
+
+        // Gera companheiros de equipe para o time do jogador (usando elenco real)
+        function generateTeammates(teamCode) {
+            player.teammates = [];
+            const team = teams[teamCode];
+            
+            // Adiciona os jogadores do elenco real, exceto se for da mesma posição primária
+            team.roster.forEach(teammate => {
+                if (teammate.position !== player.position) {
+                    player.teammates.push({
+                        name: teammate.name,
+                        position: teammate.position,
+                        secondaryPosition: teammate.secondaryPosition,
+                        overall: teammate.overall
+                    });
+                }
+            });
+            
+            // Se não houver jogadores suficientes, completa com jogadores genéricos
+            while (player.teammates.length < 4) {
+                const positions = ["PG", "SG", "SF", "PF", "C"].filter(pos => 
+                    !player.teammates.some(t => t.position === pos || t.secondaryPosition === pos) && 
+                    pos !== player.position
+                );
+                
+                if (positions.length > 0) {
+                    const position = positions[0];
+                    const fakeNames = {
+                        "PG": ["Mike James", "Tyus Jones", "Cameron Payne"],
+                        "SG": ["Josh Richardson", "Gary Harris", "Malik Beasley"],
+                        "SF": ["Torrey Craig", "Jae Crowder", "Justin Holiday"],
+                        "PF": ["JaMychal Green", "Mike Muscala", "Taj Gibson"],
+                        "C": ["Robin Lopez", "Mason Plumlee", "Gorgui Dieng"]
+                    };
+                    
+                    player.teammates.push({
+                        name: fakeNames[position][Math.floor(Math.random() * fakeNames[position].length)],
+                        position: position,
+                        secondaryPosition: "",
+                        overall: Math.floor(Math.random() * 5) + 75 // Overall entre 75-79
+                    });
+                } else {
+                    break;
+                }
+            }
+            
+            // Ordena por posição (PG, SG, SF, PF, C)
+            player.teammates.sort((a, b) => {
+                const posOrder = { "PG": 1, "SG": 2, "SF": 3, "PF": 4, "C": 5 };
+                return posOrder[a.position] - posOrder[b.position];
+            });
+        }
+
+        // Mostra o resultado do draft
+        function showDraftResult(teamCode, pickNumber) {
+            const teamLogo = document.getElementById('team-logo');
+            const draftResult = document.getElementById('draft-result');
+            const draftTeamName = document.getElementById('draft-team-name');
+            const draftPickNumber = document.getElementById('draft-pick-number');
+            const rosterPlayers = document.getElementById('roster-players');
+            const continueBtn = document.getElementById('continue-btn');
+            const playoffsBtn = document.getElementById('playoffs-btn');
+            
+            // Gera os companheiros de equipe
+            generateTeammates(teamCode);
+            
+            // Mostra o resultado
+            draftTeamName.textContent = `${teams[teamCode].name} selecionam:`;
+            draftPickNumber.textContent = `${player.name} - ${pickNumber}ª escolha no draft`;
+            
+            // Mostra o elenco do time
+            rosterPlayers.innerHTML = '';
+            
+            // Adiciona o jogador ao elenco
+            const playerElement = document.createElement('div');
+            playerElement.className = 'teammate';
+            playerElement.innerHTML = `
+                <div class="teammate-position">${player.position}</div>
+                <div class="teammate-name">${player.name} <em>(você)</em></div>
+                <div class="teammate-rating">${player.overall}</div>
+            `;
+            rosterPlayers.appendChild(playerElement);
+            
+            // Adiciona os companheiros de equipe
+            player.teammates.forEach(teammate => {
+                const teammateElement = document.createElement('div');
+                teammateElement.className = 'teammate';
+                teammateElement.innerHTML = `
+                    <div class="teammate-position">${teammate.position}</div>
+                    <div class="teammate-name">${teammate.name}</div>
+                    <div class="teammate-rating">${teammate.overall}</div>
+                `;
+                rosterPlayers.appendChild(teammateElement);
+            });
+            
+            draftResult.style.display = 'block';
+            continueBtn.classList.remove('hidden');
+            playoffsBtn.classList.remove('hidden');
+            
+            // Desbloqueia conquista
+            unlockAchievement("drafted");
+            if (pickNumber <= 14) {
+                unlockAchievement("lottery-pick");
+            }
+        }
+
+        // Inicia a temporada após o draft
+        function startSeason() {
+            document.getElementById('draft-screen').classList.add('hidden');
+            document.getElementById('player-dashboard').classList.remove('hidden');
+            document.getElementById('season-info').textContent = `Temporada ${player.currentSeason}`;
+            updatePlayerInfo();
+        }
+
+        // Vai direto para os playoffs
+        function goToPlayoffs() {
+            // Verifica se já está nos playoffs
+            if (document.getElementById('playoffs-screen').classList.contains('hidden')) {
+                // Configura novos playoffs apenas se ainda não foram configurados nesta temporada
+                if (!player.currentSeasonPlayoffs) {
+                    setupPlayoffs();
+                }
+
+                // Esconde as outras telas
+                document.getElementById('draft-screen').classList.add('hidden');
+                document.getElementById('player-dashboard').classList.add('hidden');
+                document.getElementById('trophy-gallery').classList.add('hidden');
+
+                // Mostra a tela de playoffs
+                document.getElementById('playoffs-screen').classList.remove('hidden');
+                document.getElementById('playoffs-season-info').textContent = `Temporada ${player.currentSeason} - Playoffs`;
+                document.getElementById('current-season-number').textContent = player.currentSeason;
+
+                // Completa a temporada se não estiver completa
+                if (player.seasonStats.gamesPlayed < 82) {
+                    player.seasonStats.gamesPlayed = 82;
+                }
+
+                // Desbloqueia conquista de classificação para os playoffs
+                unlockAchievement("playoff-berth");
+
+                // Renderiza o bracket dos playoffs
+                renderPlayoffBracket();
+            }
+        }
+
+        // Configura os playoffs para a temporada atual
+        function setupPlayoffs() {
+            player.currentPlayoffRound = 0;
+            
+            // Cria os playoffs para a temporada atual
+            player.currentSeasonPlayoffs = {
+                rounds: [
+                    { name: "Primeira Rodada", series: [] },
+                    { name: "Semifinais de Conferência", series: [] },
+                    { name: "Finais de Conferência", series: [] },
+                    { name: "Finais da NBA", series: [] }
+                ],
+                stats: {
+                    playoffGames: 0,
+                    playoffWins: 0,
+                    playoffLosses: 0
+                }
+            };
+            
+            // Determina a conferência do time do jogador
+            const conference = teams[player.team].conference;
+            
+            // Embaralha os times da mesma conferência para criar matchups aleatórios
+            const conferenceTeams = shuffleArray(
+                Object.keys(teams).filter(code => 
+                    teams[code].conference === conference && code !== player.team
+                )
+            );
+            
+            // Seleciona um oponente aleatório
+            const opponentTeam = conferenceTeams[0];
+            
+            // Configura a primeira série
+            player.currentSeasonPlayoffs.rounds[0].series.push({
+                team1: player.team,
+                team2: opponentTeam,
+                team1Wins: 0,
+                team2Wins: 0,
+                games: Array(7).fill(null),
+                completed: false
+            });
+        }
+
+        // Função para embaralhar array
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Renderiza o bracket dos playoffs
+        function renderPlayoffBracket() {
+            const bracket = document.getElementById('playoffs-bracket');
+            bracket.innerHTML = '';
+            
+            // Esconde o banner de campeão
+            document.getElementById('champion-banner').classList.add('hidden');
+            
+            player.currentSeasonPlayoffs.rounds.forEach((round, roundIndex) => {
+                const roundDiv = document.createElement('div');
+                roundDiv.className = 'section';
+                roundDiv.innerHTML = `<h3>${round.name}</h3>`;
+                
+                round.series.forEach((series, seriesIndex) => {
+                    const seriesDiv = document.createElement('div');
+                    seriesDiv.className = 'playoff-series';
+                    
+                    const team1 = teams[series.team1];
+                    const team2 = teams[series.team2];
+                    
+                    const seriesHeader = document.createElement('div');
+                    seriesHeader.className = 'series-header';
+                    seriesHeader.innerHTML = `
+                        <div>${team1.name} (${series.team1Wins})</div>
+                        <div>vs</div>
+                        <div>${team2.name} (${series.team2Wins})</div>
+                    `;
+                    
+                    const seriesGames = document.createElement('div');
+                    seriesGames.className = 'series-games';
+                    
+                    series.games.forEach((game, gameIndex) => {
+                        const gameResult = document.createElement('div');
+                        gameResult.className = 'game-result';
+                        
+                        if (game === null) {
+                            gameResult.className += ' pending';
+                            gameResult.textContent = gameIndex + 1;
+                        } else if (game === 'W') {
+                            gameResult.className += ' win';
+                            gameResult.textContent = 'W';
+                        } else {
+                            gameResult.className += ' loss';
+                            gameResult.textContent = 'L';
+                        }
+                        
+                        seriesGames.appendChild(gameResult);
+                    });
+                    
+                    seriesDiv.appendChild(seriesHeader);
+                    seriesDiv.appendChild(seriesGames);
+                    roundDiv.appendChild(seriesDiv);
+                });
+                
+                bracket.appendChild(roundDiv);
+            });
+            
+            // Mostra ou esconde os botões
+            const currentRound = player.currentSeasonPlayoffs.rounds[player.currentPlayoffRound];
+            const currentSeries = currentRound ? currentRound.series[0] : null;
+            
+            if (currentSeries && !currentSeries.completed) {
+                document.getElementById('simulate-playoff-game-btn').style.display = 'block';
+                document.getElementById('next-season-btn').style.display = 'none';
+            } else if (currentSeries && currentSeries.completed && currentSeries.team1Wins === 4 && player.currentPlayoffRound < 3) {
+                // Série terminada com vitória, mas ainda não é a final - avança para próxima rodada
+                advanceToNextRound();
+            } else {
+                // Série terminada - mostra o botão de próxima temporada
+                document.getElementById('simulate-playoff-game-btn').style.display = 'none';
+                document.getElementById('next-season-btn').style.display = 'block';
+                
+                // Se o time do jogador venceu as finais, mostra o banner
+                if (player.currentPlayoffRound === 3 && currentSeries && currentSeries.team1Wins === 4) {
+                    showChampionshipBanner();
+                }
+            }
+        }
+
+        // Simula um jogo dos playoffs
+        function simulatePlayoffGame() {
+            const currentRound = player.currentSeasonPlayoffs.rounds[player.currentPlayoffRound];
+            const currentSeries = currentRound.series[0];
+            
+            // Verifica se a série já acabou
+            if (currentSeries.completed) {
+                // Se a série atual está completa, avance para a próxima rodada se houver
+                if (currentSeries.team1Wins === 4 && player.currentPlayoffRound < 3) {
+                    advanceToNextRound();
+                }
+                return;
+            }
+            
+            // Encontra o próximo jogo não jogado
+            const gameIndex = currentSeries.games.findIndex(game => game === null);
+            
+            if (gameIndex === -1) {
+                return;
+            }
+            
+            // Simula o jogo - chance de vitória baseada no overall do jogador
+            const winProbability = 0.4 + (player.overall - 60) * 0.01; // 40% de base + 1% por ponto de overall
+            const isWin = Math.random() < winProbability;
+            
+            if (isWin) {
+                currentSeries.team1Wins++;
+                currentSeries.games[gameIndex] = 'W';
+                player.currentSeasonPlayoffs.stats.playoffWins++;
+                player.seasonStats.playoffWins++;
+            } else {
+                currentSeries.team2Wins++;
+                currentSeries.games[gameIndex] = 'L';
+                player.currentSeasonPlayoffs.stats.playoffLosses++;
+                player.seasonStats.playoffLosses++;
+            }
+            
+            player.currentSeasonPlayoffs.stats.playoffGames++;
+            player.seasonStats.playoffGames++;
+            
+            // Verifica se a série terminou
+            if (currentSeries.team1Wins === 4 || currentSeries.team2Wins === 4) {
+                currentSeries.completed = true;
+                
+                if (currentSeries.team1Wins === 4) {
+                    unlockAchievement("series-win");
+                    
+                    // Verifica se chegou nas finais de conferência
+                    if (player.currentPlayoffRound === 1) {
+                        unlockAchievement("conference-finals");
+                    }
+                    
+                    // Verifica se chegou nas finais da NBA
+                    if (player.currentPlayoffRound === 2) {
+                        unlockAchievement("nba-finals");
+                    }
+                }
+                
+                // Mostra o botão de próxima temporada se for a última rodada ou se perdeu
+                if (player.currentPlayoffRound === 3 || currentSeries.team2Wins === 4) {
+                    document.getElementById('simulate-playoff-game-btn').style.display = 'none';
+                    document.getElementById('next-season-btn').style.display = 'block';
+                }
+                
+                // Se o time do jogador venceu as finais, mostra o banner
+                if (player.currentPlayoffRound === 3 && currentSeries.team1Wins === 4) {
+                    showChampionshipBanner();
+                }
+            }
+            
+            // Desbloqueia conquista de primeira vitória nos playoffs
+            if (player.currentSeasonPlayoffs.stats.playoffWins === 1) {
+                unlockAchievement("playoff-win");
+            }
+            
+            // Atualiza o bracket
+            renderPlayoffBracket();
+        }
+
+        // Avança para a próxima rodada dos playoffs
+        function advanceToNextRound() {
+            player.currentPlayoffRound++;
+            
+            // Configura a próxima rodada
+            const nextRound = player.currentSeasonPlayoffs.rounds[player.currentPlayoffRound];
+            if (nextRound) {
+                // Encontra um novo oponente aleatório
+                let opponentTeam;
+                if (player.currentPlayoffRound < 3) {
+                    // Semifinais ou finais de conferência - pega time da mesma conferência
+                    const conference = teams[player.team].conference;
+                    const conferenceTeams = shuffleArray(
+                        Object.keys(teams).filter(code => 
+                            teams[code].conference === conference && code !== player.team
+                        )
+                    );
+                    opponentTeam = conferenceTeams[0];
+                } else {
+                    // Finais da NBA - pega um time da outra conferência
+                    const oppositeConference = teams[player.team].conference === "East" ? "West" : "East";
+                    const conferenceTeams = shuffleArray(
+                        Object.keys(teams).filter(code => 
+                            teams[code].conference === oppositeConference
+                        )
+                    );
+                    opponentTeam = conferenceTeams[0];
+                }
+                
+                // Configura a nova série
+                nextRound.series.push({
+                    team1: player.team,
+                    team2: opponentTeam,
+                    team1Wins: 0,
+                    team2Wins: 0,
+                    games: Array(7).fill(null),
+                    completed: false
+                });
+            }
+            
+            // Atualiza o bracket
+            renderPlayoffBracket();
+        }
+
+        // Mostra o banner de campeão
+        function showChampionshipBanner() {
+            const championBanner = document.getElementById('champion-banner');
+            const championTeam = document.getElementById('champion-team');
+            
+            championTeam.textContent = teams[player.team].name;
+            championBanner.classList.remove('hidden');
+            
+            // Desbloqueia conquista de campeão
+            unlockAchievement("champion");
+            
+            // Adiciona troféu de MVP das finais (chance de 50%)
+            if (Math.random() > 0.5) {
+                unlockTrophy("fmvp");
+            }
+            
+            // Incrementa contagem de campeonatos
+            player.careerStats.championships++;
+        }
+
+        // Inicia uma nova temporada
+        function startNewSeason() {
+            // Salva os playoffs da temporada atual no histórico
+            if (player.currentSeasonPlayoffs) {
+                player.playoffsHistory.push({
+                    season: player.currentSeason,
+                    playoffs: player.currentSeasonPlayoffs,
+                    championship: player.currentSeasonPlayoffs.rounds[3]?.series[0]?.team1Wins === 4
+                });
+            }
+
+            // Salva as estatísticas da temporada atual
+            const seasonStats = {
+                season: player.currentSeason,
+                gamesPlayed: player.seasonStats.gamesPlayed,
+                points: player.seasonStats.points,
+                assists: player.seasonStats.assists,
+                rebounds: player.seasonStats.rebounds,
+                playoffWins: player.seasonStats.playoffWins,
+                playoffLosses: player.seasonStats.playoffLosses,
+                championship: player.currentSeasonPlayoffs?.rounds[3]?.series[0]?.team1Wins === 4
+            };
+
+            player.careerStats.seasons.push(seasonStats);
+            player.careerStats.totalPoints += player.seasonStats.points;
+            player.careerStats.totalGames += player.seasonStats.gamesPlayed;
+
+            // Incrementa a temporada
+            player.currentSeason++;
+
+            // Reseta as estatísticas da temporada
+            player.seasonStats = {
+                gamesPlayed: 0,
+                points: 0,
+                assists: 0,
+                rebounds: 0,
+                games: [],
+                playoffGames: 0,
+                playoffWins: 0,
+                playoffLosses: 0
+            };
+
+            // Reseta completamente os playoffs para a nova temporada
+            player.currentSeasonPlayoffs = null;
+            player.currentPlayoffRound = 0;
+
+            // Melhora os atributos do jogador (progressão de carreira)
+            improvePlayerSkills();
+
+            // Atualiza os companheiros de equipe (alguma variação)
+            updateTeammates();
+
+            // Volta para o painel principal
+            document.getElementById('playoffs-screen').classList.add('hidden');
+            document.getElementById('player-dashboard').classList.remove('hidden');
+            document.getElementById('season-info').textContent = `Temporada ${player.currentSeason}`;
+            updatePlayerInfo();
+        }
+
+        // Melhora as habilidades do jogador entre temporadas
+        function improvePlayerSkills() {
+            // Chance de melhorar cada atributo baseado na idade (temporada)
+            const improvementChance = Math.max(0.7, 1 - (player.currentSeason * 0.05));
+            
+            // Aumenta o overall do jogador
+            const overallIncrease = Math.floor(Math.random() * 3) + 1; // 1-3 pontos por temporada
+            player.overall = Math.min(99, player.overall + overallIncrease);
+            
+            // Melhora atributos aleatoriamente
+            Object.keys(player.stats).forEach(stat => {
+                if (Math.random() < improvementChance && player.stats[stat] < 20) {
+                    player.stats[stat] += 1;
+                }
+            });
+        }
+
+        // Atualiza os companheiros de equipe para a nova temporada
+        function updateTeammates() {
+            // Mantém 60% dos jogadores, substitui 40%
+            const teammatesToKeep = Math.floor(player.teammates.length * 0.6);
+            const newTeammatesCount = player.teammates.length - teammatesToKeep;
+            
+            // Ordena por overall (mantém os melhores)
+            player.teammates.sort((a, b) => b.overall - a.overall);
+            
+            // Remove os piores jogadores
+            player.teammates = player.teammates.slice(0, teammatesToKeep);
+            
+            // Adiciona novos jogadores
+            for (let i = 0; i < newTeammatesCount; i++) {
+                const positionsNeeded = ["PG", "SG", "SF", "PF", "C"].filter(pos => 
+                    !player.teammates.some(t => t.position === pos || t.secondaryPosition === pos) && 
+                    pos !== player.position
+                );
+                
+                if (positionsNeeded.length > 0) {
+                    const position = positionsNeeded[0];
+                    const fakeNames = {
+                        "PG": ["Mike James", "Tyus Jones", "Cameron Payne"],
+                        "SG": ["Josh Richardson", "Gary Harris", "Malik Beasley"],
+                        "SF": ["Torrey Craig", "Jae Crowder", "Justin Holiday"],
+                        "PF": ["JaMychal Green", "Mike Muscala", "Taj Gibson"],
+                        "C": ["Robin Lopez", "Mason Plumlee", "Gorgui Dieng"]
+                    };
+                    
+                    player.teammates.push({
+                        name: fakeNames[position][Math.floor(Math.random() * fakeNames[position].length)],
+                        position: position,
+                        secondaryPosition: "",
+                        overall: Math.floor(Math.random() * 5) + 75 // Overall entre 75-79
+                    });
+                }
+            }
+            
+            // Ordena por posição novamente
+            player.teammates.sort((a, b) => {
+                const posOrder = { "PG": 1, "SG": 2, "SF": 3, "PF": 4, "C": 5 };
+                return posOrder[a.position] - posOrder[b.position];
+            });
+        }
+
+        // Mostra a galeria de troféus
+        function showTrophyGallery() {
+            document.getElementById('player-dashboard').classList.add('hidden');
+            document.getElementById('trophy-gallery').classList.remove('hidden');
+            
+            const trophiesContainer = document.getElementById('trophies-container');
+            trophiesContainer.innerHTML = '';
+            
+            allTrophies.forEach(trophy => {
+                const trophyItem = document.createElement('div');
+                trophyItem.className = 'trophy-item';
+                
+                const trophyIcon = document.createElement('div');
+                trophyIcon.className = `trophy-icon ${player.trophyCounts[trophy.id] > 0 ? '' : 'trophy-locked'}`;
+                trophyIcon.innerHTML = player.trophyCounts[trophy.id] > 0 ? '🏆' : '🔒';
+                
+                const trophyName = document.createElement('h3');
+                trophyName.textContent = trophy.name;
+                
+                const trophyDesc = document.createElement('p');
+                trophyDesc.textContent = trophy.description;
+                
+                const trophyCount = document.createElement('div');
+                trophyCount.className = 'trophy-count';
+                trophyCount.textContent = player.trophyCounts[trophy.id] > 0 ? `${player.trophyCounts[trophy.id]}x` : '';
+                
+                trophyItem.appendChild(trophyIcon);
+                trophyItem.appendChild(trophyName);
+                trophyItem.appendChild(trophyDesc);
+                trophyItem.appendChild(trophyCount);
+                trophiesContainer.appendChild(trophyItem);
+            });
+        }
+
+        // Volta ao painel principal
+        function backToDashboard() {
+            document.getElementById('trophy-gallery').classList.add('hidden');
+            document.getElementById('player-dashboard').classList.remove('hidden');
+        }
+
+        // Mostra o histórico de playoffs
+        function viewPlayoffsHistory() {
+            let historyHTML = '<h2>Histórico de Playoffs</h2>';
+            
+            if (player.playoffsHistory.length === 0) {
+                historyHTML += '<p>Nenhum histórico de playoffs ainda.</p>';
+            } else {
+                player.playoffsHistory.forEach(season => {
+                    historyHTML += `<div class="season-history">`;
+                    historyHTML += `<h3>Temporada ${season.season}</h3>`;
+                    
+                    const playoffStats = season.playoffs.stats;
+                    historyHTML += `<p>Jogos: ${playoffStats.playoffGames} (${playoffStats.playoffWins}V-${playoffStats.playoffLosses}D)</p>`;
+                    
+                    const finalRound = season.playoffs.rounds[3];
+                    if (finalRound && finalRound.series.length > 0) {
+                        const finalSeries = finalRound.series[0];
+                        if (finalSeries.completed) {
+                            const result = finalSeries.team1Wins === 4 ? 
+                                `🏆 Campeão da NBA` : 
+                                `🥈 Vice-campeão`;
+                            historyHTML += `<p>${result}</p>`;
+                        }
+                    }
+                    
+                    historyHTML += `</div>`;
+                });
+            }
+            
+            // Cria um modal para mostrar o histórico
+            const modal = document.createElement('div');
+            modal.className = 'history-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    ${historyHTML}
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Fecha o modal ao clicar no X
+            modal.querySelector('.close-modal').onclick = function() {
+                document.body.removeChild(modal);
+            };
+            
+            // Fecha o modal ao clicar fora
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    document.body.removeChild(modal);
+                }
+            };
+        }
+
+        // Atualiza as informações do jogador no painel
+        function updatePlayerInfo() {
+            document.getElementById('player-full-name').textContent = player.name;
+            document.getElementById('player-team-info').textContent = 
+                `${teams[player.team].name} - ${getPositionName(player.position)}`;
+            
+            // Mostra o overall atualizado
+            document.getElementById('player-overall').innerHTML = `Overall: <span>${player.overall}</span>`;
+
+            // Atualiza as estatísticas médias
+            if (player.seasonStats.gamesPlayed > 0) {
+                document.getElementById('ppg-stat').textContent = 
+                    (player.seasonStats.points / player.seasonStats.gamesPlayed).toFixed(1);
+                document.getElementById('apg-stat').textContent = 
+                    (player.seasonStats.assists / player.seasonStats.gamesPlayed).toFixed(1);
+                document.getElementById('rpg-stat').textContent = 
+                    (player.seasonStats.rebounds / player.seasonStats.gamesPlayed).toFixed(1);
+            }
+
+            // Atualiza o progresso da temporada
+            document.getElementById('games-played').textContent = player.seasonStats.gamesPlayed;
+            document.getElementById('season-progress').style.width = 
+                `${(player.seasonStats.gamesPlayed / 82) * 100}%`;
+
+            // Atualiza a lista de jogos
+            updateGamesList();
+
+            // Atualiza as conquistas
+            updateAchievements();
+            
+            // Atualiza a lista de companheiros de equipe
+            updateTeammatesList();
+            
+            // Mostra ou esconde o botão de ir para os playoffs
+            document.getElementById('go-to-playoffs-btn').style.display = 
+                (player.seasonStats.gamesPlayed >= 82 || player.seasonStats.playoffGames > 0) ? 'block' : 'none';
+        }
+
+        // Atualiza a lista de companheiros de equipe
+        function updateTeammatesList() {
+            const teammatesList = document.getElementById('teammates-list');
+            teammatesList.innerHTML = '';
+            
+            player.teammates.forEach(teammate => {
+                const teammateElement = document.createElement('div');
+                teammateElement.className = 'teammate';
+                teammateElement.innerHTML = `
+                    <div class="teammate-position">${teammate.position}</div>
+                    <div class="teammate-name">${teammate.name}</div>
+                    <div class="teammate-rating">${teammate.overall}</div>
+                `;
+                teammatesList.appendChild(teammateElement);
+            });
+        }
+
+        // Retorna o nome completo da posição
+        function getPositionName(abbr) {
+            const positions = {
+                "PG": "Armador",
+                "SG": "Ala-armador",
+                "SF": "Ala",
+                "PF": "Ala-pivô",
+                "C": "Pivô"
+            };
+            return positions[abbr] || abbr;
+        }
+
+        // Joga uma partida
+        function playGame() {
+            if (player.seasonStats.gamesPlayed >= 82) {
+                alert("A temporada regular acabou! Vá para os playoffs.");
+                return;
+            }
+
+            // Gera estatísticas baseadas nos atributos do jogador e overall
+            const gameStats = {
+                points: generateStat(player.stats.shooting, 0, 50) * (player.overall / 70),
+                assists: generateStat(player.stats.playmaking, 0, 15) * (player.overall / 70),
+                rebounds: generateStat(player.stats.rebounding, 0, 20) * (player.overall / 70),
+                steals: generateStat(player.stats.defense, 0, 5) * (player.overall / 70),
+                blocks: generateStat(player.stats.defense, 0, 5) * (player.overall / 70),
+                opponent: getRandomOpponent(),
+                result: Math.random() > (0.5 - (player.overall - 70) * 0.005) ? "W" : "L" // Chance de vitória baseada no overall
+            };
+
+            // Arredonda as estatísticas
+            gameStats.points = Math.round(gameStats.points);
+            gameStats.assists = Math.round(gameStats.assists);
+            gameStats.rebounds = Math.round(gameStats.rebounds);
+            gameStats.steals = Math.round(gameStats.steals);
+            gameStats.blocks = Math.round(gameStats.blocks);
+
+            // Adiciona o jogo às estatísticas
+            player.seasonStats.gamesPlayed++;
+            player.seasonStats.points += gameStats.points;
+            player.seasonStats.assists += gameStats.assists;
+            player.seasonStats.rebounds += gameStats.rebounds;
+            player.seasonStats.games.unshift(gameStats);
+
+            // Verifica conquistas
+            checkAchievements(gameStats);
+
+            // Verifica se terminou a temporada regular
+            if (player.seasonStats.gamesPlayed === 82) {
+                awardSeasonTrophies();
+            }
+
+            // Atualiza o painel
+            updatePlayerInfo();
+
+            // Mostra o resultado do jogo
+            alert(`Resultado da Partida:\n\n` +
+                  `VS ${gameStats.opponent}: ${gameStats.result === "W" ? "Vitória" : "Derrota"}\n` +
+                  `Pontos: ${gameStats.points}\n` +
+                  `Assistências: ${gameStats.assists}\n` +
+                  `Rebotes: ${gameStats.rebounds}\n` +
+                  `Roubos: ${gameStats.steals}\n` +
+                  `Tocos: ${gameStats.blocks}`);
+        }
+
+        // Concede troféus no final da temporada
+        function awardSeasonTrophies() {
+            const ppg = player.seasonStats.points / player.seasonStats.gamesPlayed;
+            const apg = player.seasonStats.assists / player.seasonStats.gamesPlayed;
+            const rpg = player.seasonStats.rebounds / player.seasonStats.gamesPlayed;
+            
+            // Chance de ganhar alguns troféus baseado no desempenho
+            if (ppg >= 25 && Math.random() > 0.3) {
+                unlockTrophy("scoring-champ");
+            }
+            
+            if (ppg >= 20 && apg >= 7 && Math.random() > 0.4) {
+                unlockTrophy("all-nba");
+            }
+            
+            if (player.currentSeason === 1 && player.draftPick <= 5 && Math.random() > 0.5) {
+                unlockTrophy("rookie-year");
+            }
+            
+            if (player.stats.defense >= 16 && Math.random() > 0.6) {
+                unlockTrophy("dpoy");
+            }
+            
+            if (ppg >= 28 && apg >= 7 && rpg >= 7 && Math.random() > 0.7) {
+                unlockTrophy("mvp");
+            }
+            
+            if (Math.random() > 0.5) {
+                unlockTrophy("all-star");
+            }
+        }
+
+        // Pula um número específico de jogos
+        function skipGames(numberOfGames) {
+            if (player.seasonStats.gamesPlayed >= 82) {
+                alert("A temporada regular já acabou!");
+                return;
+            }
+            
+            const gamesToPlay = Math.min(numberOfGames, 82 - player.seasonStats.gamesPlayed);
+            
+            for (let i = 0; i < gamesToPlay; i++) {
+                const gameStats = {
+                    points: generateStat(player.stats.shooting, 0, 35) * (player.overall / 70),
+                    assists: generateStat(player.stats.playmaking, 0, 10) * (player.overall / 70),
+                    rebounds: generateStat(player.stats.rebounding, 0, 15) * (player.overall / 70),
+                    opponent: getRandomOpponent(),
+                    result: Math.random() > (0.5 - (player.overall - 70) * 0.005) ? "W" : "L"
+                };
+                
+                gameStats.points = Math.round(gameStats.points);
+                gameStats.assists = Math.round(gameStats.assists);
+                gameStats.rebounds = Math.round(gameStats.rebounds);
+                
+                player.seasonStats.gamesPlayed++;
+                player.seasonStats.points += gameStats.points;
+                player.seasonStats.assists += gameStats.assists;
+                player.seasonStats.rebounds += gameStats.rebounds;
+                player.seasonStats.games.unshift(gameStats);
+                
+                // Verifica conquistas apenas no último jogo pulado
+                if (i === gamesToPlay - 1) {
+                    checkAchievements(gameStats);
+                }
+            }
+            
+            // Verifica se terminou a temporada
+            if (player.seasonStats.gamesPlayed === 82) {
+                awardSeasonTrophies();
+            }
+            
+            updatePlayerInfo();
+            alert(`Você pulou ${gamesToPlay} jogos!\n\nEstatísticas atualizadas.`);
+        }
+
+        // Gera uma estatística baseada no atributo
+        function generateStat(attribute, min, max) {
+            const base = (attribute / 20) * max;
+            const variation = (Math.random() - 0.5) * (max * 0.3);
+            return Math.max(min, Math.min(max, Math.round(base + variation)));
+        }
+
+        // Retorna um oponente aleatório (não pode ser o próprio time)
+        function getRandomOpponent() {
+            const teamCodes = Object.keys(teams);
+            let opponent;
+            do {
+                opponent = teamCodes[Math.floor(Math.random() * teamCodes.length)];
+            } while (opponent === player.team);
+            return teams[opponent].name;
+        }
+
+        // Atualiza a lista de jogos
+        function updateGamesList() {
+            const gamesList = document.getElementById('games-list');
+            gamesList.innerHTML = '';
+
+            const recentGames = player.seasonStats.games.slice(0, 5);
+            
+            if (recentGames.length === 0) {
+                gamesList.innerHTML = '<p>Nenhuma partida jogada ainda.</p>';
+                return;
+            }
+
+            recentGames.forEach((game, index) => {
+                const gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.innerHTML = `
+                    <div>VS ${game.opponent}</div>
+                    <div>
+                        <span style="color: ${game.result === "W" ? "green" : "red"}">
+                            ${game.result === "W" ? "W" : "L"}
+                        </span>
+                        ${game.points}PTS ${game.assists}AST ${game.rebounds}REB
+                    </div>
+                `;
+                gamesList.appendChild(gameItem);
+            });
+        }
+
+        // Verifica conquistas
+        function checkAchievements(gameStats) {
+            // Primeiro jogo
+            if (player.seasonStats.gamesPlayed === 1 && !hasAchievement("first-game")) {
+                unlockAchievement("first-game");
+            }
+
+            // Primeiros pontos
+            if (gameStats.points > 0 && !hasAchievement("first-points")) {
+                unlockAchievement("first-points");
+            }
+
+            // Duplo-duplo
+            if ((gameStats.points >= 10 && gameStats.assists >= 10) ||
+                (gameStats.points >= 10 && gameStats.rebounds >= 10) ||
+                (gameStats.assists >= 10 && gameStats.rebounds >= 10)) {
+                if (!hasAchievement("double-double")) {
+                    unlockAchievement("double-double");
+                }
+            }
+
+            // 30 pontos
+            if (gameStats.points >= 30 && !hasAchievement("30-points")) {
+                unlockAchievement("30-points");
+            }
+
+            // 10 assistências
+            if (gameStats.assists >= 10 && !hasAchievement("10-assists")) {
+                unlockAchievement("10-assists");
+            }
+        }
+
+        // Verifica se o jogador tem uma conquista
+        function hasAchievement(achievementId) {
+            return player.achievements.includes(achievementId);
+        }
+
+        // Desbloqueia uma conquista
+        function unlockAchievement(achievementId) {
+            if (!hasAchievement(achievementId)) {
+                player.achievements.push(achievementId);
+                
+                // Marca como desbloqueada na lista completa
+                const achievement = allAchievements.find(a => a.id === achievementId);
+                if (achievement) {
+                    achievement.earned = true;
+                }
+                
+                // Mostra mensagem
+                alert(`Conquista desbloqueada: ${achievement.name}\n\n${achievement.description}`);
+            }
+        }
+
+        // Desbloqueia um troféu
+        function unlockTrophy(trophyId) {
+            const trophy = allTrophies.find(t => t.id === trophyId);
+            if (trophy) {
+                player.trophyCounts[trophy.id]++;
+                
+                // Mostra mensagem apenas na primeira vez
+                if (player.trophyCounts[trophy.id] === 1) {
+                    alert(`Troféu conquistado: ${trophy.name}\n\n${trophy.description}`);
+                }
+                
+                // Mostra a galeria de troféus
+                showTrophyGallery();
+            }
+        }
+
+        // Atualiza a lista de conquistas
+        function updateAchievements() {
+            const achievementsList = document.getElementById('achievements-list');
+            achievementsList.innerHTML = '';
+
+            if (player.achievements.length === 0) {
+                achievementsList.innerHTML = '<p>Nenhuma conquista ainda. Continue jogando!</p>';
+                return;
+            }
+
+            // Adiciona botão para ver troféus
+            const trophyButton = document.createElement('button');
+            trophyButton.className = 'btn';
+            trophyButton.textContent = 'Ver Troféus';
+            trophyButton.addEventListener('click', showTrophyGallery);
+            achievementsList.appendChild(trophyButton);
+
+            player.achievements.forEach(achievementId => {
+                const achievement = allAchievements.find(a => a.id === achievementId);
+                if (achievement) {
+                    const achievementItem = document.createElement('div');
+                    achievementItem.className = 'achievement';
+                    achievementItem.innerHTML = `
+                        <div class="achievement-icon">★</div>
+                        <div>
+                            <strong>${achievement.name}</strong>
+                            <p>${achievement.description}</p>
+                        </div>
+                    `;
+                    achievementsList.appendChild(achievementItem);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
