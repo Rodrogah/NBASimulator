@@ -527,14 +527,14 @@ function setupAttributeSliders() {
     // Atualiza a estrutura HTML para os novos atributos
     const attributeSliders = document.querySelector('.attribute-sliders');
     attributeSliders.innerHTML = '';
-    
+
     // Cria dois grupos de atributos para layout em colunas
     const attributesLeftColumn = document.createElement('div');
     attributesLeftColumn.className = 'attributes-column';
-    
+
     const attributesRightColumn = document.createElement('div');
     attributesRightColumn.className = 'attributes-column';
-    
+
     // Adiciona os sliders nas colunas
     sliders.forEach((slider, index) => {
         const sliderHtml = `
@@ -543,17 +543,17 @@ function setupAttributeSliders() {
                 <input type="range" id="${slider.id}" min="${slider.min}" max="${slider.max}" value="5">
             </div>
         `;
-        
+
         if (index < sliders.length / 2) {
             attributesLeftColumn.innerHTML += sliderHtml;
         } else {
             attributesRightColumn.innerHTML += sliderHtml;
         }
     });
-    
+
     attributeSliders.appendChild(attributesLeftColumn);
     attributeSliders.appendChild(attributesRightColumn);
-    
+
     // Redefine os valores iniciais para criar mais variação
     sliders.forEach(slider => {
         document.getElementById(slider.id).value = 5;
@@ -564,7 +564,7 @@ function setupAttributeSliders() {
     sliders.forEach(slider => {
         const sliderElement = document.getElementById(slider.id);
         const valueElement = document.getElementById(slider.valueId);
-        
+
         // Atualiza os atributos min e max do slider
         sliderElement.min = slider.min;
         sliderElement.max = slider.max;
@@ -574,12 +574,12 @@ function setupAttributeSliders() {
             updatePointsLeft();
         });
     });
-    
+
     // Adiciona botões de builds rápidas
     const quickBuildsContainer = document.createElement('div');
     quickBuildsContainer.className = 'quick-builds';
     quickBuildsContainer.innerHTML = '<h3>Builds Rápidas</h3>';
-    
+
     const builds = [
         { id: 'shooter', name: 'Atirador' },
         { id: 'slasher', name: 'Atacador' },
@@ -592,19 +592,19 @@ function setupAttributeSliders() {
         { id: 'all_around', name: 'Completo' },
         { id: 'post_scorer', name: 'Post Scorer' }
     ];
-    
+
     const buildsRow1 = document.createElement('div');
     buildsRow1.className = 'builds-row';
-    
+
     const buildsRow2 = document.createElement('div');
     buildsRow2.className = 'builds-row';
-    
+
     builds.forEach((build, index) => {
         const buildButton = document.createElement('button');
         buildButton.className = 'build-btn';
         buildButton.textContent = build.name;
         buildButton.addEventListener('click', () => applyBuild(build.id));
-        
+
         // Divide os botões em duas linhas
         if (index < 5) {
             buildsRow1.appendChild(buildButton);
@@ -612,14 +612,14 @@ function setupAttributeSliders() {
             buildsRow2.appendChild(buildButton);
         }
     });
-    
+
     quickBuildsContainer.appendChild(buildsRow1);
     quickBuildsContainer.appendChild(buildsRow2);
-    
+
     // Adiciona os botões antes dos sliders
     const attributeSection = document.querySelector('.section:nth-child(2)');
     attributeSection.insertBefore(quickBuildsContainer, attributeSection.querySelector('.points-info'));
-    
+
     // Atualiza player.stats para incluir os novos atributos
     player.stats = {
         shooting: 5,
@@ -635,7 +635,7 @@ function setupAttributeSliders() {
         rebounding: 5,
         strength: 5
     };
-    
+
     // Inicia o cálculo de pontos
     updatePointsLeft();
 }
@@ -646,14 +646,14 @@ function setupAttributeSliders() {
 function updatePointsLeft() {
     // Calcula quantos pontos o jogador está usando além do mínimo
     let total = 0;
-    
+
     // Lista de todos os atributos possíveis
     const allAttributes = [
         'shooting', 'midrange', 'threepoint', 'finishing', 
         'defense', 'perimeter_d', 'athleticism', 'speed', 
         'playmaking', 'ball_handle', 'rebounding', 'strength'
     ];
-    
+
     // Reseta os pontos de atributos no objeto do jogador
     allAttributes.forEach(attr => {
         const element = document.getElementById(attr);
@@ -662,14 +662,14 @@ function updatePointsLeft() {
             total += (parseInt(element.value) - 5); // Cada atributo começa em 5
         }
     });
-    
+
     // Ponto de balanceamento total para 12 atributos (110 pontos disponíveis além do mínimo)
     const maxPoints = 110;
     const pointsLeft = maxPoints - total;
-    
+
     document.getElementById('points-left').textContent = pointsLeft;
     document.getElementById('points-progress').style.width = `${(total / maxPoints) * 100}%`;
-    
+
     // Desabilita o botão se não tiver distribuído todos os pontos
     document.getElementById('create-btn').disabled = pointsLeft !== 0;
 }
@@ -693,7 +693,7 @@ function applyBuild(buildType) {
         rebounding: document.getElementById('rebounding'),
         strength: document.getElementById('strength')
     };
-    
+
     // Valores base (5 para cada atributo)
     const baseValues = {
         shooting: 5,
@@ -709,7 +709,7 @@ function applyBuild(buildType) {
         rebounding: 5,
         strength: 5
     };
-    
+
     // Distribui os 110 pontos conforme a build (cada build precisa ter exatamente 110 pontos acima do mínimo)
     switch(buildType) {
         case 'shooter':
@@ -727,7 +727,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 8;    // +3
             baseValues.strength = 7;      // +2
             break;
-            
+
         case 'slasher':
             // Especialista em penetração
             baseValues.shooting = 10;     // +5
@@ -743,7 +743,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 7;    // +2
             baseValues.strength = 10;     // +5
             break;
-            
+
         case 'lockdown_defender':
             // Especialista em defesa
             baseValues.shooting = 8;      // +3
@@ -759,7 +759,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 14;   // +9
             baseValues.strength = 15;     // +10
             break;
-            
+
         case 'playmaker':
             // Especialista em passes e ball handling
             baseValues.shooting = 13;     // +8
@@ -775,7 +775,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 6;    // +1
             baseValues.strength = 6;      // +1
             break;
-            
+
         case 'glass_cleaner':
             // Especialista em rebotes
             baseValues.shooting = 7;      // +2
@@ -791,7 +791,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 20;   // +15
             baseValues.strength = 19;     // +14
             break;
-            
+
         case 'two_way':
             // Bom em ataque e defesa
             baseValues.shooting = 13;     // +8
@@ -807,7 +807,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 12;   // +7
             baseValues.strength = 15;     // +10
             break;
-            
+
         case 'stretch_big':
             // Pivô arremessador
             baseValues.shooting = 15;     // +10
@@ -823,7 +823,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 19;   // +14
             baseValues.strength = 18;     // +13
             break;
-            
+
         case 'athletic_freak':
             // Especialista em atleticismo
             baseValues.shooting = 11;     // +6
@@ -839,7 +839,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 12;   // +7
             baseValues.strength = 18;     // +13
             break;
-            
+
         case 'all_around':
             // Jogador completo e equilibrado
             baseValues.shooting = 14;     // +9
@@ -855,7 +855,7 @@ function applyBuild(buildType) {
             baseValues.rebounding = 14;   // +9
             baseValues.strength = 14;     // +9
             break;
-            
+
         case 'post_scorer':
             // Especialista em jogo de costas para a cesta
             baseValues.shooting = 8;      // +3
@@ -872,7 +872,7 @@ function applyBuild(buildType) {
             baseValues.strength = 19;     // +14
             break;
     }
-    
+
     // Aplica os valores aos sliders
     for (const stat in baseValues) {
         if (sliders[stat]) {
@@ -880,7 +880,7 @@ function applyBuild(buildType) {
             document.getElementById(`${stat}-value`).textContent = baseValues[stat];
         }
     }
-    
+
     // Atualiza os pontos
     updatePointsLeft();
 }
@@ -893,10 +893,10 @@ function updatePointsLeft() {
         'defense', 'perimeter_d', 'athleticism', 'speed', 
         'playmaking', 'ball_handle', 'rebounding', 'strength'
     ];
-    
+
     // Calcula quantos pontos o jogador está usando além do mínimo
     let total = 0;
-    
+
     // Calcula o total para cada atributo
     allAttributes.forEach(attr => {
         const element = document.getElementById(attr);
@@ -905,17 +905,17 @@ function updatePointsLeft() {
             total += (parseInt(element.value) - 5);
         }
     });
-    
+
     // Ponto de balanceamento total para 12 atributos (110 pontos disponíveis além do mínimo)
     const maxPoints = 110;
     const pointsLeft = maxPoints - total;
-    
+
     document.getElementById('points-left').textContent = pointsLeft;
     document.getElementById('points-progress').style.width = `${(total / maxPoints) * 100}%`;
-    
+
     // Desabilita o botão se não tiver distribuído todos os pontos
     document.getElementById('create-btn').disabled = pointsLeft !== 0;
-    
+
     // Ajusta a cor do indicador de pontos conforme o progresso
     const pointsLeftElement = document.getElementById('points-left');
     if (pointsLeft < 0) {
@@ -935,12 +935,12 @@ function startDraft() {
         alert(`Você precisa distribuir exatamente todos os pontos disponíveis! Ainda restam ${pointsLeft} pontos.`);
         return;
     }
-    
+
     player.name = document.getElementById('player-name').value;
     if (!player.name) {
         player.name = "Rookie Player";
     }
-    
+
     player.position = document.getElementById('player-position').value;
 
     // Lista de todos os atributos possíveis
@@ -949,10 +949,10 @@ function startDraft() {
         'defense', 'perimeter_d', 'athleticism', 'speed', 
         'playmaking', 'ball_handle', 'rebounding', 'strength'
     ];
-    
+
     // Reset das estatísticas para ter certeza que todos os atributos estão incluídos
     player.stats = {};
-    
+
     // Adiciona cada atributo ao objeto do jogador
     allAttributes.forEach(attr => {
         const element = document.getElementById(attr);
@@ -975,135 +975,196 @@ function startDraft() {
     simulateDraft();
 }
 
-// Simula o processo de draft
+// Simula o processo de draft com uma roleta de cassino mais estável e visual
 function simulateDraft() {
     const draftAnimation = document.getElementById('draft-animation');
-    const teamLogoWheel = document.getElementById('team-logo-wheel');
-    const teamLogo = document.getElementById('team-logo');
     const draftResult = document.getElementById('draft-result');
     const continueBtn = document.getElementById('continue-btn');
     const playoffsBtn = document.getElementById('playoffs-btn');
 
-    // Cria a roleta horizontal no HTML com uma área destacada para o time selecionado
-    draftAnimation.innerHTML = `
-        <div class="draft-wheel-container">
-            <div class="logo-wheel"></div>
-            <div class="selection-frame"></div>
-        </div>
-    `;
-    const logoWheel = document.querySelector('.logo-wheel');
-    
-    // Adiciona todos os logos dos times na roleta
-    const teamCodesArray = Object.keys(teams);
-    
-    // Adiciona os times várias vezes para criar uma roleta contínua sem espaços vazios
-    // Adiciona 3 cópias completas para garantir espaço suficiente para a animação
-    for (let i = 0; i < 3; i++) {
-        teamCodesArray.forEach(teamCode => {
-            const logoDiv = document.createElement('div');
-            logoDiv.className = 'wheel-logo-container';
-            logoDiv.innerHTML = `
-                <div class="logo-border">
-                    <img src="${teams[teamCode].logo}" alt="${teams[teamCode].name}" class="wheel-logo">
-                </div>
-                <div class="team-name-label">${teams[teamCode].name}</div>
-            `;
-            logoWheel.appendChild(logoDiv);
-        });
-    }
-
-    // Esconde o resultado e botões
+    // Prepara a tela
     draftResult.style.display = 'none';
     continueBtn.classList.add('hidden');
     playoffsBtn.classList.add('hidden');
 
+    // Cria a roleta horizontal com container fixo e seleção central
+    draftAnimation.innerHTML = `
+        <div class="draft-wheel-container">
+            <div class="selection-marker"></div>
+            <div class="logo-wheel"></div>
+        </div>
+        <div class="draft-status">
+            <div class="draft-spinner">🏀</div>
+            <h3>Draft em andamento...</h3>
+        </div>
+    `;
+
+    // Referências
+    const logoWheel = document.querySelector('.logo-wheel');
+    const draftStatus = document.querySelector('.draft-status');
+    
     // Calcula a posição no draft (1-30)
     let draftPosition;
-    
-    // Baseado nos atributos do jogador (maior soma = melhor posição)
     const totalAttributePoints = Object.values(player.stats).reduce((sum, curr) => sum + curr, 0);
-    
+
     if (totalAttributePoints >= 85) {
-        // Top 5 pick (1-5)
-        draftPosition = Math.floor(Math.random() * 5) + 1;
+        draftPosition = Math.floor(Math.random() * 5) + 1; // Top 5 pick
     } else if (totalAttributePoints >= 75) {
-        // Lottery pick (1-14)
-        draftPosition = Math.floor(Math.random() * 14) + 1;
+        draftPosition = Math.floor(Math.random() * 14) + 1; // Lottery pick
     } else if (totalAttributePoints >= 65) {
-        // Mid first round (15-20)
-        draftPosition = Math.floor(Math.random() * 6) + 15;
+        draftPosition = Math.floor(Math.random() * 6) + 15; // Mid first round
     } else {
-        // Late first round (21-30)
-        draftPosition = Math.floor(Math.random() * 10) + 21;
+        draftPosition = Math.floor(Math.random() * 10) + 21; // Late first round
     }
 
-    // Garante que está entre 1 e 30
-    draftPosition = Math.max(1, Math.min(30, draftPosition));
     player.draftPick = draftPosition;
-
-    // Lista de todos os times
-    const teamCodes = Object.keys(teams);
-
-    // Seleciona um time aleatório (simplificado - na realidade, a ordem do draft é fixa)
-    const selectedTeamCode = teamCodes[Math.floor(Math.random() * teamCodes.length)];
-    player.team = selectedTeamCode;
-
-    // Pegamos a segunda cópia do time selecionado (no meio da roleta)
-    const selectedTeamIndex = teamCodesArray.length + teamCodesArray.indexOf(selectedTeamCode);
     
-    // A roleta gira rapidamente no início e depois desacelera até parar no time selecionado
-    let speed = 40; // Velocidade inicial maior
-    let position = 0;
-    const logoWidth = 120; // Largura de cada logo + margin
+    // Coleta todos os times e embaralha
+    const teamCodesArray = Object.keys(teams);
     
-    // Obtem a largura da janela e do container para centralizar adequadamente
-    const containerWidth = draftAnimation.offsetWidth;
+    // Escolhe um time aleatório como vencedor do draft (pode ser pré-determinado se desejar)
+    const selectedTeamIndex = Math.floor(Math.random() * teamCodesArray.length);
+    const selectedTeam = teamCodesArray[selectedTeamIndex];
     
-    // Calcula a posição final (centralizando o logo selecionado no meio da tela)
-    const finalPosition = -(selectedTeamIndex * logoWidth) + (containerWidth / 2) - (logoWidth / 2);
+    // Cria uma ordem para os times na roleta, garantindo que o time selecionado estará por perto
+    const orderedTeams = [...teamCodesArray];
     
-    // Desaceleração mais lenta para aumentar a emoção
-    const deceleration = 0.985;
+    // Repete times para criar uma roleta comprida
+    let wheelHtml = '';
+    for (let i = 0; i < 12; i++) {
+        orderedTeams.forEach(teamCode => {
+            wheelHtml += `
+                <div class="wheel-logo-container" data-team="${teamCode}">
+                    <div class="logo-border">
+                        <img src="${teams[teamCode].logo}" alt="${teams[teamCode].name}" class="wheel-logo">
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    logoWheel.innerHTML = wheelHtml;
+    
+    // Configuração da animação
+    const logoWidth = 100; // Largura de cada logo + margem
+    const totalItems = logoWheel.children.length;
+    
+    // Calcula uma posição inicial que coloque os logos no meio
+    const initialPosition = (window.innerWidth / 2) - (logoWidth / 2);
+    logoWheel.style.transform = `translateX(${initialPosition}px)`;
+    
+    // Posição final que termina exatamente no time selecionado
+    // Primeiro, encontre a posição atual do primeiro time selecionado
+    const allLogos = Array.from(logoWheel.querySelectorAll('.wheel-logo-container'));
+    
+    // Pega a posição de um time específico (aproximadamente no meio da roleta)
+    const targetIndex = Math.floor(totalItems / 2) + Math.floor(teamCodesArray.length / 2) - 1;
+    
+    // Calcula a posição final como um valor negativo para mover a roleta para a esquerda
+    const finalPosition = initialPosition - (targetIndex * logoWidth);
+    
+    // Adiciona variabilidade para não terminar sempre no mesmo ponto
+    const variability = Math.floor(Math.random() * teamCodesArray.length) * logoWidth;
+    const adjustedFinalPosition = finalPosition - variability;
     
     // Animação da roleta
-    const animateRoleta = () => {
-        // Move a roleta
-        position -= speed;
-        logoWheel.style.transform = `translateX(${position}px)`;
+    let startTime = null;
+    const totalDuration = 5000; // 5 segundos de animação
+    const easingStrength = 3; // Força do efeito de desaceleração
+
+    function animateWheel(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsedTime = timestamp - startTime;
         
-        // Desacelera mais gradualmente
-        speed *= deceleration;
+        // Progresso da animação (0 a 1)
+        let progress = Math.min(elapsedTime / totalDuration, 1);
         
-        // Quando estiver muito lento, para no time selecionado
-        if (speed > 0.2) {
-            requestAnimationFrame(animateRoleta);
+        // Aplica função de easing para desaceleração natural
+        // Usa função de easing Out Quint: 1 - (1 - t)^5
+        const easing = 1 - Math.pow(1 - progress, easingStrength);
+        
+        // Calcula a posição atual
+        const currentPosition = initialPosition - easing * (initialPosition - adjustedFinalPosition);
+        
+        // Aplica a posição
+        logoWheel.style.transform = `translateX(${currentPosition}px)`;
+        
+        // Continua a animação se ainda não chegou ao fim
+        if (progress < 1) {
+            requestAnimationFrame(animateWheel);
         } else {
-            // Ajusta para a posição final exata
-            logoWheel.style.transform = `translateX(${finalPosition}px)`;
-            logoWheel.style.transition = 'transform 1s ease-out';
+            // Finaliza a animação e seleciona o time
+            finishDraftAnimation();
+        }
+    }
+    
+    // Função para finalizar a animação e selecionar o time
+    function finishDraftAnimation() {
+        // Encontra qual logo está no centro
+        const containerRect = document.querySelector('.draft-wheel-container').getBoundingClientRect();
+        const centerX = containerRect.left + containerRect.width / 2;
+        
+        let closestLogo = null;
+        let minDistance = Infinity;
+        let selectedTeamCode = null;
+        
+        allLogos.forEach(logo => {
+            const logoRect = logo.getBoundingClientRect();
+            const logoCenter = logoRect.left + logoRect.width / 2;
+            const distance = Math.abs(logoCenter - centerX);
             
-            // Destaca o time selecionado
-            setTimeout(() => {
-                const selectedLogo = logoWheel.children[selectedTeamIndex];
-                selectedLogo.classList.add('selected-team');
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestLogo = logo;
+                selectedTeamCode = logo.getAttribute('data-team');
+            }
+        });
+        
+        // Aplica efeito ao time selecionado
+        if (closestLogo) {
+            // Destaca o logo selecionado
+            closestLogo.classList.add('selected-team');
+            
+            // Desativa o status de "Draft em andamento"
+            draftStatus.innerHTML = `<h3>Selecionado!</h3>`;
+            
+            // Adiciona som de sirene (opcional)
+            const draftSound = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
+            draftSound.volume = 0.5;
+            draftSound.play().catch(err => console.log('Áudio não pôde ser reproduzido', err));
+            
+            // Configura o time do jogador
+            if (teams[selectedTeamCode]) {
+                player.team = selectedTeamCode;
                 
-                // Mostra o resultado do draft após a animação
+                // Mostra o resultado após breve delay
                 setTimeout(() => {
                     showDraftResult(selectedTeamCode, draftPosition);
-                }, 1000);
-            }, 1000);
+                }, 1500);
+            } else {
+                console.error("Time não encontrado:", selectedTeamCode);
+                // Fallback para um time aleatório
+                const randomTeam = teamCodesArray[Math.floor(Math.random() * teamCodesArray.length)];
+                player.team = randomTeam;
+                
+                setTimeout(() => {
+                    showDraftResult(randomTeam, draftPosition);
+                }, 1500);
+            }
         }
-    };
+    }
     
-    // Inicia a animação após um pequeno delay
-    setTimeout(animateRoleta, 500);
+    // Inicia a animação após um breve delay para processamento
+    setTimeout(() => {
+        requestAnimationFrame(animateWheel);
+    }, 800);
 }
 
 // Gera companheiros de equipe para o time do jogador (usando elenco real)
 function generateTeammates(teamCode) {
     player.teammates = [];
     const team = teams[teamCode];
-    
+
     // Mapeamento para garantir todas as posições no time
     const positionCovered = {
         "PG": false,
@@ -1112,7 +1173,7 @@ function generateTeammates(teamCode) {
         "PF": false,
         "C": false
     };
-    
+
     // A posição do jogador já está coberta
     positionCovered[player.position] = true;
 
@@ -1129,7 +1190,7 @@ function generateTeammates(teamCode) {
             positionCovered[teammate.position] = true;
         }
     });
-    
+
     // Se ainda precisar, adiciona outros jogadores do elenco
     team.roster.forEach(teammate => {
         if (teammate.position !== player.position && 
@@ -1144,19 +1205,19 @@ function generateTeammates(teamCode) {
     });
 
     // Garante que temos exatamente 4 companheiros (para um total de 5 jogadores com o usuário)
-    
+
     // Se tem jogadores em excesso, remove os de menor overall
     if (player.teammates.length > 4) {
         player.teammates.sort((a, b) => b.overall - a.overall);
         player.teammates = player.teammates.slice(0, 4);
     }
-    
+
     // Se não houver jogadores suficientes, completa com jogadores genéricos
     // Prioriza preencher posições que ainda não têm jogadores
     while (player.teammates.length < 4) {
         // Encontra posições que ainda precisam ser preenchidas
         const positionsNeeded = Object.keys(positionCovered).filter(pos => !positionCovered[pos]);
-        
+
         let position;
         if (positionsNeeded.length > 0) {
             // Prioriza posições não cobertas
@@ -1166,7 +1227,7 @@ function generateTeammates(teamCode) {
             const availablePos = ["PG", "SG", "SF", "PF", "C"].filter(pos => pos !== player.position);
             position = availablePos[Math.floor(Math.random() * availablePos.length)];
         }
-        
+
         const fakeNames = {
             "PG": ["Mike James", "Tyus Jones", "Cameron Payne", "T.J. McConnell", "Ish Smith", "D.J. Augustin"],
             "SG": ["Josh Richardson", "Gary Harris", "Malik Beasley", "Luke Kennard", "Wayne Ellington", "Alec Burks"],
@@ -1174,7 +1235,7 @@ function generateTeammates(teamCode) {
             "PF": ["JaMychal Green", "Mike Muscala", "Taj Gibson", "Larry Nance Jr.", "Markieff Morris", "Jeff Green"],
             "C": ["Robin Lopez", "Mason Plumlee", "Gorgui Dieng", "Dwight Howard", "Nerlens Noel", "Bismack Biyombo"]
         };
-        
+
         // Escolhe um nome não usado ainda
         let name;
         do {
@@ -1187,7 +1248,7 @@ function generateTeammates(teamCode) {
             secondaryPosition: "",
             overall: Math.floor(Math.random() * 8) + 72 // Overall entre 72-79, maior variação
         });
-        
+
         positionCovered[position] = true;
     }
 
@@ -1265,25 +1326,25 @@ function goToPlayoffs() {
         // Precisa completar a temporada primeiro
         skipGames(82 - player.seasonStats.gamesPlayed);
     }
-    
+
     // Verifica se o time se classificou para os playoffs
     const madePlayoffs = checkPlayoffQualification();
-    
+
     if (madePlayoffs) {
         document.getElementById('player-dashboard').classList.add('hidden');
         document.getElementById('playoffs-screen').classList.remove('hidden');
         document.getElementById('playoffs-info').textContent = `Temporada ${player.currentSeason} - Playoffs`;
-        
+
         // Inicializa os playoffs
         setupPlayoffs();
         renderPlayoffBracket();
-        
+
         // Desbloqueia conquista
         unlockAchievement("playoff-berth");
     } else {
         // Não classificou para os playoffs
         alert(`O ${teams[player.team].name} não se classificou para os playoffs este ano. Tente melhorar na próxima temporada!`);
-        
+
         // Vai direto para a próxima temporada
         startNewSeason();
     }
@@ -1293,20 +1354,20 @@ function goToPlayoffs() {
 function checkPlayoffQualification() {
     // Calcula o percentual de vitórias baseado nos jogos do jogador
     let winPercentage = player.seasonStats.games.filter(game => game.result === "W").length / player.seasonStats.gamesPlayed;
-    
+
     // Adiciona um componente baseado no overall do jogador e dos companheiros
     const teamAvgOverall = player.teammates.reduce((sum, t) => sum + t.overall, 0) / player.teammates.length;
     const combinedOverall = (player.overall + teamAvgOverall) / 2;
-    
+
     // Ajuste baseado no overall combinado (cada ponto acima de 80 adiciona 0.5%)
     const overallBonus = (combinedOverall - 80) * 0.005;
-    
+
     // Calcula a probabilidade final de classificação
     let qualificationChance = winPercentage * 0.6 + overallBonus;
-    
+
     // Limita entre 0.2 e 0.9
     qualificationChance = Math.max(0.2, Math.min(0.9, qualificationChance));
-    
+
     // Decide se o time se classifica com base na probabilidade
     return Math.random() < qualificationChance;
 }
@@ -1315,10 +1376,10 @@ function checkPlayoffQualification() {
 function setupPlayoffs() {
     // Reinicia o round atual
     player.currentPlayoffRound = 0;
-    
+
     // Esvazia as séries anteriores
     player.playoffSeries = [];
-    
+
     // Cria as 4 rodadas de playoffs
     const rounds = [
         { name: "Primeira Rodada", opponent: null, team1Wins: 0, team2Wins: 0, games: [null, null, null, null, null, null, null], completed: false },
@@ -1326,19 +1387,19 @@ function setupPlayoffs() {
         { name: "Final de Conferência", opponent: null, team1Wins: 0, team2Wins: 0, games: [null, null, null, null, null, null, null], completed: false },
         { name: "Finais da NBA", opponent: null, team1Wins: 0, team2Wins: 0, games: [null, null, null, null, null, null, null], completed: false }
     ];
-    
+
     // Determina os oponentes para cada rodada (simulado - na vida real seria baseado na classificação)
     const conference = teams[player.team].conference;
-    
+
     // Para primeira rodada, escolhe um time aleatório da mesma conferência
     const conferenceTeams = Object.keys(teams).filter(teamCode => 
         teams[teamCode].conference === conference && teamCode !== player.team
     );
-    
+
     // Primeira rodada: oponente aleatório de mesma conferência
     const round1Opponent = conferenceTeams[Math.floor(Math.random() * conferenceTeams.length)];
     rounds[0].opponent = round1Opponent;
-    
+
     // As outras rodadas serão determinadas após cada série
     player.playoffSeries = rounds;
 }
@@ -1347,24 +1408,24 @@ function setupPlayoffs() {
 function renderPlayoffBracket() {
     const bracket = document.getElementById('playoffs-bracket');
     bracket.innerHTML = '';
-    
+
     // Esconde o banner de campeão
     document.getElementById('champion-banner').classList.add('hidden');
-    
+
     // Renderiza a série atual
     const currentSeries = player.playoffSeries[player.currentPlayoffRound];
     if (!currentSeries || !currentSeries.opponent) return;
-    
+
     const roundDiv = document.createElement('div');
     roundDiv.className = 'section';
     roundDiv.innerHTML = `<h3>${currentSeries.name}</h3>`;
-    
+
     const seriesDiv = document.createElement('div');
     seriesDiv.className = 'playoff-series';
-    
+
     const team1 = teams[player.team];
     const team2 = teams[currentSeries.opponent];
-    
+
     // Cabeçalho da série
     const seriesHeader = document.createElement('div');
     seriesHeader.className = 'series-header';
@@ -1373,15 +1434,15 @@ function renderPlayoffBracket() {
         <div>vs</div>
         <div>${team2.name} (${currentSeries.team2Wins})</div>
     `;
-    
+
     // Jogos da série
     const seriesGames = document.createElement('div');
     seriesGames.className = 'series-games';
-    
+
     currentSeries.games.forEach((game, gameIndex) => {
         const gameResult = document.createElement('div');
         gameResult.className = 'game-result';
-        
+
         if (game === null) {
             gameResult.className += ' pending';
             gameResult.textContent = gameIndex + 1;
@@ -1392,23 +1453,23 @@ function renderPlayoffBracket() {
             gameResult.className += ' loss';
             gameResult.textContent = 'D';
         }
-        
+
         seriesGames.appendChild(gameResult);
     });
-    
+
     seriesDiv.appendChild(seriesHeader);
     seriesDiv.appendChild(seriesGames);
     roundDiv.appendChild(seriesDiv);
     bracket.appendChild(roundDiv);
-    
+
     // Atualiza botões
     const simulateBtn = document.getElementById('simulate-playoff-game-btn');
     const nextSeasonBtn = document.getElementById('next-season-btn');
-    
+
     if (currentSeries.completed) {
         simulateBtn.style.display = 'none';
         nextSeasonBtn.style.display = 'block';
-        
+
         if (player.currentPlayoffRound === 3 && currentSeries.team1Wins === 4) {
             showChampionshipBanner();
         }
@@ -1421,42 +1482,42 @@ function renderPlayoffBracket() {
 // Simula um jogo dos playoffs com escolhas importantes
 function simulatePlayoffGame() {
     const currentSeries = player.playoffSeries[player.currentPlayoffRound];
-    
+
     // Verifica se a série já acabou
     if (currentSeries.completed) {
         return;
     }
-    
+
     // Encontra o próximo jogo não jogado
     const gameIndex = currentSeries.games.findIndex(game => game === null);
-    
+
     if (gameIndex === -1) {
         return;
     }
-    
+
     // Prepara as escolhas estratégicas para o jogo
     const choices = prepareGameChoices(currentSeries, gameIndex);
-    
+
     // Mostra o diálogo de escolha ao jogador
     showPlayoffChoiceDialog(choices, (selectedChoice) => {
         // Calcula a probabilidade base de vitória
         let winProbability = 0.5; // 50% base
-        
+
         // Ajusta baseado no overall do jogador (cada ponto acima de 70 aumenta 0.5%)
         winProbability += (player.overall - 70) * 0.005;
-        
+
         // Ajusta baseado na média do overall dos companheiros
         const teamAvgOverall = player.teammates.reduce((sum, t) => sum + t.overall, 0) / player.teammates.length;
-        
+
         // Média do overall dos adversários (simulado)
         const opponentAvgOverall = 82; // Valor base médio
-        
+
         // Ajusta baseado na diferença de overall dos times
         winProbability += (teamAvgOverall - opponentAvgOverall) * 0.01;
-        
+
         // Estágio dos playoffs (mais difícil conforme avança)
         winProbability -= player.currentPlayoffRound * 0.025;
-        
+
         // Vantagem de casa (jogos 1, 2, 5, 7 em casa para o time com melhor campanha)
         // Considerando que jogador tem vantagem de mando nos jogos ímpares
         if (gameIndex % 2 === 0) {
@@ -1464,16 +1525,16 @@ function simulatePlayoffGame() {
         } else {
             winProbability -= 0.05; // -5% fora
         }
-        
+
         // Aplica o modificador da escolha estratégica
         winProbability += selectedChoice.winProbabilityModifier;
-        
+
         // Limita entre 0.15 e 0.85
         winProbability = Math.max(0.15, Math.min(0.85, winProbability));
-        
+
         // Decide vitória ou derrota considerando a estratégia escolhida
         const isWin = Math.random() < winProbability;
-        
+
         // Simula estatísticas individuais com base na escolha feita
         const gameStats = {
             points: Math.round(generateStat(player.stats.shooting, 5, 45) * (1 + selectedChoice.statModifiers.points)),
@@ -1481,13 +1542,13 @@ function simulatePlayoffGame() {
             rebounds: Math.round(generateStat(player.stats.rebounding, 1, 18) * (1 + selectedChoice.statModifiers.rebounds)),
             performance: selectedChoice.name
         };
-        
+
         // Adiciona resultado do jogo
         if (isWin) {
             currentSeries.team1Wins++;
             currentSeries.games[gameIndex] = 'W';
             player.seasonStats.playoffWins++;
-            
+
             // Desbloqueia conquista de primeira vitória nos playoffs
             if (player.seasonStats.playoffWins === 1) {
                 unlockAchievement("playoff-win");
@@ -1497,35 +1558,35 @@ function simulatePlayoffGame() {
             currentSeries.games[gameIndex] = 'L';
             player.seasonStats.playoffLosses++;
         }
-        
+
         player.seasonStats.playoffGames++;
-        
+
         // Mostra resultado do jogo com estatísticas personalizadas pela estratégia
         showPlayoffGameResult(isWin, gameStats, currentSeries, selectedChoice);
-        
+
         // Verifica se a série terminou
         if (currentSeries.team1Wins === 4 || currentSeries.team2Wins === 4) {
             currentSeries.completed = true;
-            
+
             if (currentSeries.team1Wins === 4) {
                 // Time do jogador venceu
                 unlockAchievement("series-win");
-                
+
                 // Verifica se é hora de avançar para a próxima rodada
                 if (player.currentPlayoffRound < 3) {
                     // Avança para próxima rodada
                     player.currentPlayoffRound++;
-                    
+
                     // Escolhe novo adversário
                     setupNextPlayoffOpponent();
-                    
+
                     // Verifica conquistas específicas por rodada
                     if (player.currentPlayoffRound === 2) {
                         unlockAchievement("conference-finals");
                     } else if (player.currentPlayoffRound === 3) {
                         unlockAchievement("nba-finals");
                     }
-                    
+
                     // Recompensa por avançar nas fases
                     awardPlayoffAdvancementBonus();
                 } else {
@@ -1538,7 +1599,7 @@ function simulatePlayoffGame() {
                 document.getElementById('next-season-btn').style.display = 'block';
             }
         }
-        
+
         // Atualiza o bracket
         renderPlayoffBracket();
     });
@@ -1551,9 +1612,9 @@ function prepareGameChoices(series, gameIndex) {
     const isMustWin = (series.team2Wins === 3); // Situação de eliminação
     const isCloseOut = (series.team1Wins === 3); // Chance de fechar a série
     const roundName = series.name;
-    
+
     let choices = [];
-    
+
     // Escolha 1: Ataque agressivo
     choices.push({
         name: "Ataque Agressivo",
@@ -1566,7 +1627,7 @@ function prepareGameChoices(series, gameIndex) {
             rebounds: -0.1
         }
     });
-    
+
     // Escolha 2: Jogo coletivo
     choices.push({
         name: "Jogo Coletivo",
@@ -1579,7 +1640,7 @@ function prepareGameChoices(series, gameIndex) {
             rebounds: 0.0
         }
     });
-    
+
     // Escolha 3: Defesa primeiro
     choices.push({
         name: "Defesa Primeiro",
@@ -1592,7 +1653,7 @@ function prepareGameChoices(series, gameIndex) {
             rebounds: 0.3
         }
     });
-    
+
     // Escolhas situacionais
     if (isMustWin) {
         // Quando está enfrentando eliminação
@@ -1608,7 +1669,7 @@ function prepareGameChoices(series, gameIndex) {
             }
         });
     }
-    
+
     if (isCloseOut) {
         // Quando pode eliminar o adversário
         choices.push({
@@ -1623,7 +1684,7 @@ function prepareGameChoices(series, gameIndex) {
             }
         });
     }
-    
+
     // Escolha especial para finais da NBA
     if (roundName === "Finais da NBA") {
         choices.push({
@@ -1638,7 +1699,7 @@ function prepareGameChoices(series, gameIndex) {
             }
         });
     }
-    
+
     // Escolha específica para jogo 7 (decisivo)
     if (series.team1Wins === 3 && series.team2Wins === 3) {
         choices = [{
@@ -1653,7 +1714,7 @@ function prepareGameChoices(series, gameIndex) {
             }
         }];
     }
-    
+
     return choices;
 }
 
@@ -1662,53 +1723,53 @@ function showPlayoffChoiceDialog(choices, callback) {
     // Cria o modal de escolha
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
-    
+
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content playoff-choice-modal';
-    
+
     const modalHeader = document.createElement('h2');
     modalHeader.textContent = 'Escolha sua Estratégia';
     modalContent.appendChild(modalHeader);
-    
+
     const modalDescription = document.createElement('p');
     modalDescription.textContent = 'Esta decisão afetará o resultado do jogo. Escolha sabiamente:';
     modalContent.appendChild(modalDescription);
-    
+
     const choicesContainer = document.createElement('div');
     choicesContainer.className = 'choices-container';
-    
+
     // Adiciona cada escolha como um botão
     choices.forEach(choice => {
         const choiceButton = document.createElement('div');
         choiceButton.className = 'choice-button';
-        
+
         const choiceIcon = document.createElement('div');
         choiceIcon.className = 'choice-icon';
         choiceIcon.textContent = choice.icon;
-        
+
         const choiceContent = document.createElement('div');
         choiceContent.className = 'choice-content';
-        
+
         const choiceName = document.createElement('h3');
         choiceName.textContent = choice.name;
-        
+
         const choiceDesc = document.createElement('p');
         choiceDesc.textContent = choice.description;
-        
+
         choiceContent.appendChild(choiceName);
         choiceContent.appendChild(choiceDesc);
-        
+
         choiceButton.appendChild(choiceIcon);
         choiceButton.appendChild(choiceContent);
-        
+
         choiceButton.addEventListener('click', () => {
             document.body.removeChild(modalOverlay);
             callback(choice);
         });
-        
+
         choicesContainer.appendChild(choiceButton);
     });
-    
+
     modalContent.appendChild(choicesContainer);
     modalOverlay.appendChild(modalContent);
     document.body.appendChild(modalOverlay);
@@ -1719,16 +1780,16 @@ function showPlayoffGameResult(isWin, gameStats, series, choice) {
     const opponent = teams[series.opponent].name;
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
-    
+
     const modalContent = document.createElement('div');
     modalContent.className = `modal-content game-result-modal ${isWin ? 'win-result' : 'loss-result'}`;
-    
+
     const resultHeader = document.createElement('h2');
     resultHeader.innerHTML = isWin ? '🏆 VITÓRIA! 🏆' : '❌ DERROTA ❌';
-    
+
     const gameDetails = document.createElement('div');
     gameDetails.className = 'game-details';
-    
+
     // Informações da série e placar
     const seriesInfo = document.createElement('div');
     seriesInfo.className = 'series-info';
@@ -1736,7 +1797,7 @@ function showPlayoffGameResult(isWin, gameStats, series, choice) {
         <h3>${teams[player.team].name} ${series.team1Wins} - ${series.team2Wins} ${opponent}</h3>
         <p>${series.name}</p>
     `;
-    
+
     // Estatísticas do jogador
     const playerStats = document.createElement('div');
     playerStats.className = 'player-playoff-stats';
@@ -1757,13 +1818,13 @@ function showPlayoffGameResult(isWin, gameStats, series, choice) {
             </div>
         </div>
     `;
-    
+
     // Narrativa do jogo (personalizada com base na escolha e no resultado)
     const narrative = document.createElement('div');
     narrative.className = 'game-narrative';
-    
+
     let narrativeText = '';
-    
+
     if (isWin) {
         if (gameStats.points >= 35) {
             narrativeText = `Você teve uma atuação dominante! ${opponent} não encontrou resposta para parar seu ataque.`;
@@ -1783,9 +1844,9 @@ function showPlayoffGameResult(isWin, gameStats, series, choice) {
             narrativeText = `${opponent} jogou melhor coletivamente hoje e mereceu a vitória.`;
         }
     }
-    
+
     narrative.textContent = narrativeText;
-    
+
     // Botão para continuar
     const continueButton = document.createElement('button');
     continueButton.className = 'btn';
@@ -1793,15 +1854,15 @@ function showPlayoffGameResult(isWin, gameStats, series, choice) {
     continueButton.addEventListener('click', () => {
         document.body.removeChild(modalOverlay);
     });
-    
+
     gameDetails.appendChild(seriesInfo);
     gameDetails.appendChild(playerStats);
     gameDetails.appendChild(narrative);
-    
+
     modalContent.appendChild(resultHeader);
     modalContent.appendChild(gameDetails);
     modalContent.appendChild(continueButton);
-    
+
     modalOverlay.appendChild(modalContent);
     document.body.appendChild(modalOverlay);
 }
@@ -1811,7 +1872,7 @@ function awardPlayoffAdvancementBonus() {
     const round = player.currentPlayoffRound;
     const roundNames = ["Primeira Rodada", "Semifinal de Conferência", "Final de Conferência"];
     let bonusMessage = "";
-    
+
     // Bônus crescente por fase avançada
     switch(round) {
         case 1:
@@ -1827,10 +1888,10 @@ function awardPlayoffAdvancementBonus() {
             bonusMessage = "Avançou para as Finais da NBA: +3 de Overall!";
             break;
     }
-    
+
     // Limita o overall máximo
     player.overall = Math.min(99, player.overall);
-    
+
     // Mostra mensagem de bônus
     setTimeout(() => {
         alert(`🌟 ${bonusMessage} 🌟\n\nSeu novo Overall: ${player.overall}`);
@@ -1846,14 +1907,14 @@ function setupNextPlayoffOpponent() {
         teamCode !== player.team &&
         !player.playoffSeries.some(series => series.opponent === teamCode)
     );
-    
+
     // Para as finais (rodada 3), pega um time da outra conferência
     if (currentRound === 3) {
         const otherConference = conference === "East" ? "West" : "East";
         const finalsOpponents = Object.keys(teams).filter(teamCode => 
             teams[teamCode].conference === otherConference
         );
-        
+
         player.playoffSeries[currentRound].opponent = finalsOpponents[Math.floor(Math.random() * finalsOpponents.length)];
     } else {
         // Para outras rodadas, pega um time da mesma conferência
@@ -1868,27 +1929,30 @@ function showChampionshipBanner() {
     if (existingModal) {
         document.body.removeChild(existingModal);
     }
-    
+
     // Atualiza o banner normal no bracket
     const championBanner = document.getElementById('champion-banner');
     const championTeam = document.getElementById('champion-team');
-    
+
     championTeam.textContent = teams[player.team].name;
     championBanner.classList.remove('hidden');
-    
+
     // Desbloqueia conquista de campeão
     unlockAchievement("champion");
-    
+
     // Incrementa contagem de campeonatos
     player.careerStats.championships++;
-    
+
+    // Marcador para temporada atual do campeonato
+    const currentChampionshipSeason = player.currentSeason;
+
     // Cria modal de celebração
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay championship-modal-overlay';
-    
+
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content championship-modal';
-    
+
     // Adiciona confetes via animação CSS
     for (let i = 0; i < 100; i++) {
         const confetti = document.createElement('div');
@@ -1898,7 +1962,7 @@ function showChampionshipBanner() {
         confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 80%, 60%)`;
         modalOverlay.appendChild(confetti);
     }
-    
+
     // Conteúdo do banner de campeonato
     modalContent.innerHTML = `
         <div class="championship-header">
@@ -1906,29 +1970,29 @@ function showChampionshipBanner() {
             <img src="${teams[player.team].logo}" alt="${teams[player.team].name}" class="champion-logo">
             <h2>${teams[player.team].name}</h2>
         </div>
-        
+
         <div class="championship-player">
             <h3>${player.name}</h3>
             <p class="player-position">${getPositionName(player.position)}</p>
             <p class="player-overall">Overall: ${player.overall}</p>
         </div>
-        
+
         <div class="championship-awards">
             <h3>Prêmios Conquistados</h3>
             <div class="award-items">
                 <!-- Os prêmios serão adicionados aqui dinamicamente -->
             </div>
         </div>
-        
+
         <button id="celebrate-btn" class="btn btn-championship">Comemorar</button>
     `;
-    
+
     modalOverlay.appendChild(modalContent);
     document.body.appendChild(modalOverlay);
-    
+
     // Adiciona os prêmios conquistados
     const awardItems = modalContent.querySelector('.award-items');
-    
+
     // Sempre concede o troféu de campeão
     const championshipAward = document.createElement('div');
     championshipAward.className = 'award-item';
@@ -1936,17 +2000,18 @@ function showChampionshipBanner() {
         <div class="award-icon">🏆</div>
         <div class="award-info">
             <h4>Campeão da NBA</h4>
-            <p>Temporada ${player.currentSeason}</p>
+            <p>Temporada ${currentChampionshipSeason}</p>
         </div>
     `;
     awardItems.appendChild(championshipAward);
-    
-    // MVP das Finais (agora baseado nas estatísticas do jogador)
+
+    // MVP das Finais (só nas finais da NBA - round 3)
     // Verifica os jogos da série final
-    const finalsSeries = player.playoffSeries[3];
+    const finalsSeries = player.playoffSeries[3]; // Finais da NBA (round 3)
     let highPerformance = false;
-    
-    if (finalsSeries && finalsSeries.team1Wins === 4) {
+    let receivedFMVP = false; // Flag para controlar se já recebeu o FMVP nesta temporada
+
+    if (finalsSeries && finalsSeries.team1Wins === 4 && player.currentPlayoffRound === 3) {
         // Verifica desempenho na série final (se média de pontos > 25 ou estatísticas gerais boas)
         if (player.seasonStats.playoffGames > 0) {
             const ppg = player.seasonStats.points / player.seasonStats.playoffGames;
@@ -1954,13 +2019,21 @@ function showChampionshipBanner() {
                 highPerformance = true;
             }
         }
-        
+
         // Maior chance de MVP das finais com base no desempenho
         const mvpChance = highPerformance ? 0.9 : 0.6;
-        
-        if (Math.random() < mvpChance) {
+
+        // Verifica se já recebeu o FMVP nesta temporada
+        receivedFMVP = player.careerStats.seasons[player.careerStats.seasons.length - 1]?.fmvp || false;
+
+        if (!receivedFMVP && Math.random() < mvpChance) {
             unlockTrophy("fmvp");
-            
+
+            // Guarda a temporada em que ganhou o Finals MVP
+            if (player.careerStats.seasons.length > 0) {
+                player.careerStats.seasons[player.careerStats.seasons.length - 1].fmvp = true;
+            }
+
             const fmvpAward = document.createElement('div');
             fmvpAward.className = 'award-item';
             fmvpAward.innerHTML = `
@@ -1971,12 +2044,12 @@ function showChampionshipBanner() {
                 </div>
             `;
             awardItems.appendChild(fmvpAward);
-            
+
             // Concede bônus especial por ser MVP das Finais
             player.overall = Math.min(99, player.overall + 3);
         }
     }
-    
+
     // Bônus de campeonato
     const teamBonus = document.createElement('div');
     teamBonus.className = 'championship-bonus';
@@ -1985,14 +2058,15 @@ function showChampionshipBanner() {
         <p>+5 de Overall! Novo Overall: ${Math.min(99, player.overall + 5)}</p>
     `;
     modalContent.insertBefore(teamBonus, modalContent.querySelector('button'));
-    
+
     // Aplica o bônus ao overall
     player.overall = Math.min(99, player.overall + 5);
-    
+
     // Botão para comemorar (continuar)
-    document.getElementById('celebrate-btn').addEventListener('click', () => {
+    const celebrateBtn = modalContent.querySelector('.btn-championship');
+    celebrateBtn.addEventListener('click', () => {
         document.body.removeChild(modalOverlay);
-        
+
         // Habilita o botão para próxima temporada
         document.getElementById('simulate-playoff-game-btn').style.display = 'none';
         document.getElementById('next-season-btn').style.display = 'block';
@@ -2004,6 +2078,7 @@ function startNewSeason() {
     // Salva as estatísticas da temporada atual
     const seasonStats = {
         season: player.currentSeason,
+        team: player.team, // Armazena o time para cada temporada
         gamesPlayed: player.seasonStats.gamesPlayed,
         points: player.seasonStats.points,
         assists: player.seasonStats.assists,
@@ -2013,14 +2088,14 @@ function startNewSeason() {
         playoffLosses: player.seasonStats.playoffLosses,
         championship: player.currentPlayoffRound === 3 && player.playoffSeries[3].team1Wins === 4
     };
-    
+
     player.careerStats.seasons.push(seasonStats);
     player.careerStats.totalPoints += player.seasonStats.points;
     player.careerStats.totalGames += player.seasonStats.gamesPlayed;
-    
+
     // Incrementa a temporada
     player.currentSeason++;
-    
+
     // Reseta COMPLETAMENTE as estatísticas da temporada
     player.seasonStats = {
         gamesPlayed: 0,
@@ -2032,30 +2107,30 @@ function startNewSeason() {
         playoffWins: 0,
         playoffLosses: 0
     };
-    
+
     // Reseta TODOS os dados dos playoffs
     player.playoffSeries = [];
     player.currentPlayoffRound = 0;
-    
+
     // Se atingiu 10 temporadas, oferecer opção de aposentadoria
     if (player.currentSeason >= 10) {
         const wantsToRetire = confirm("Você já completou 10 temporadas na NBA! Deseja se aposentar e encerrar sua carreira?");
-        
+
         if (wantsToRetire) {
             finishCareer();
             return;
         }
     }
-    
+
     // Possibilidade de trocar de time
     offerTeamChange();
-    
+
     // Melhora os atributos do jogador (progressão de carreira)
     improvePlayerSkills();
-    
+
     // Atualiza os companheiros de equipe (alguma variação)
     updateTeammates();
-    
+
     // Volta para o painel principal
     document.getElementById('playoffs-screen').classList.add('hidden');
     document.getElementById('player-dashboard').classList.remove('hidden');
@@ -2069,50 +2144,50 @@ function offerTeamChange() {
     if (player.currentSeason > 1) {
         // Lista de todos os times exceto o atual
         const otherTeams = Object.keys(teams).filter(teamCode => teamCode !== player.team);
-        
+
         // Seleciona dois times aleatórios
         const team1 = otherTeams[Math.floor(Math.random() * otherTeams.length)];
         let team2;
         do {
             team2 = otherTeams[Math.floor(Math.random() * otherTeams.length)];
         } while (team2 === team1);
-        
+
         const currentTeamCode = player.team;
         const currentTeamName = teams[currentTeamCode].name;
         const team1Name = teams[team1].name;
         const team2Name = teams[team2].name;
-        
+
         // Cria o modal de escolha
         const modalOverlay = document.createElement('div');
         modalOverlay.className = 'modal-overlay';
-        
+
         const modalContent = document.createElement('div');
         modalContent.className = 'modal-content team-choice-modal';
-        
+
         modalContent.innerHTML = `
             <div class="team-choice-header">
                 <h2>Ofertas de Times</h2>
                 <p>Temporada ${player.currentSeason}</p>
             </div>
-            
+
             <div class="team-choice-info">
                 <p>Seu contrato com o ${currentTeamName} terminou e você recebeu novas propostas!</p>
                 <p>Escolha um time para a próxima temporada:</p>
             </div>
-            
+
             <div class="team-options">
                 <div class="team-option" data-team="${currentTeamCode}">
                     <img src="${teams[currentTeamCode].logo}" alt="${currentTeamName}" class="team-option-logo">
                     <h3>${currentTeamName}</h3>
                     <p>Ficar no time atual</p>
                 </div>
-                
+
                 <div class="team-option" data-team="${team1}">
                     <img src="${teams[team1].logo}" alt="${team1Name}" class="team-option-logo">
                     <h3>${team1Name}</h3>
                     <p>Nova oferta</p>
                 </div>
-                
+
                 <div class="team-option" data-team="${team2}">
                     <img src="${teams[team2].logo}" alt="${team2Name}" class="team-option-logo">
                     <h3>${team2Name}</h3>
@@ -2120,44 +2195,44 @@ function offerTeamChange() {
                 </div>
             </div>
         `;
-        
+
         modalOverlay.appendChild(modalContent);
         document.body.appendChild(modalOverlay);
-        
+
         // Adiciona eventos aos botões de times
         const teamOptions = modalContent.querySelectorAll('.team-option');
         teamOptions.forEach(option => {
             option.addEventListener('click', () => {
                 const selectedTeam = option.getAttribute('data-team');
-                
+
                 // Processa a escolha
                 if (selectedTeam !== currentTeamCode) {
                     player.team = selectedTeam;
-                    
+
                     // Mostra notificação de mudança de time
                     const resultModal = document.createElement('div');
                     resultModal.className = 'modal-overlay';
-                    
+
                     const resultContent = document.createElement('div');
                     resultContent.className = 'modal-content team-result-modal';
-                    
+
                     resultContent.innerHTML = `
                         <h2>Você assinou com ${teams[selectedTeam].name}!</h2>
                         <img src="${teams[selectedTeam].logo}" alt="${teams[selectedTeam].name}" class="result-team-logo">
                         <p>Você jogará pelo ${teams[selectedTeam].name} na temporada ${player.currentSeason}.</p>
                         <button class="btn btn-continue">Continuar</button>
                     `;
-                    
+
                     resultModal.appendChild(resultContent);
-                    
+
                     // Remove o modal anterior e adiciona o novo
                     document.body.removeChild(modalOverlay);
                     document.body.appendChild(resultModal);
-                    
+
                     // Adiciona evento ao botão continuar
                     resultContent.querySelector('.btn-continue').addEventListener('click', () => {
                         document.body.removeChild(resultModal);
-                        
+
                         // Gera novos companheiros baseados no elenco do novo time
                         generateTeammates(selectedTeam);
                     });
@@ -2165,23 +2240,23 @@ function offerTeamChange() {
                     // Permanece no mesmo time
                     const resultModal = document.createElement('div');
                     resultModal.className = 'modal-overlay';
-                    
+
                     const resultContent = document.createElement('div');
                     resultContent.className = 'modal-content team-result-modal';
-                    
+
                     resultContent.innerHTML = `
                         <h2>Você permanece no ${currentTeamName}!</h2>
                         <img src="${teams[currentTeamCode].logo}" alt="${currentTeamName}" class="result-team-logo">
                         <p>Você continua jogando pelo ${currentTeamName} na temporada ${player.currentSeason}.</p>
                         <button class="btn btn-continue">Continuar</button>
                     `;
-                    
+
                     resultModal.appendChild(resultContent);
-                    
+
                     // Remove o modal anterior e adiciona o novo
                     document.body.removeChild(modalOverlay);
                     document.body.appendChild(resultModal);
-                    
+
                     // Adiciona evento ao botão continuar
                     resultContent.querySelector('.btn-continue').addEventListener('click', () => {
                         document.body.removeChild(resultModal);
@@ -2199,73 +2274,217 @@ function finishCareer() {
                    player.trophyCounts["mvp"] >= 1 || 
                    player.trophyCounts["all-nba"] >= 5 ||
                    player.trophyCounts["all-star"] >= 8);
-    
-    // Verifica se merece camisa aposentada
-    const hasRetiredJersey = (player.careerStats.championships >= 2 || 
-                              player.trophyCounts["mvp"] >= 2 ||
-                              player.currentSeason >= 8);
-    
+
     // Verifica se é uma lenda
     const isLegend = player.currentSeason >= 15;
-    
+
     // Desbloqueia conquistas relacionadas
     if (isHOF) {
         unlockAchievement("hall-of-fame");
     }
-    
-    if (hasRetiredJersey) {
-        unlockAchievement("jersey-retired");
-    }
-    
+
     if (isLegend) {
         unlockAchievement("legend");
     }
+
+    // Calcula estatísticas de carreira adicionais
+    const ppg = (player.careerStats.totalPoints / player.careerStats.totalGames).toFixed(1);
     
-    // Prepara mensagem final
-    let careerSummary = `=== FIM DE CARREIRA ===\n\n`;
-    careerSummary += `${player.name} se aposentou após ${player.currentSeason} temporadas na NBA!\n\n`;
-    careerSummary += `Estatísticas de carreira:\n`;
-    careerSummary += `Pontos totais: ${player.careerStats.totalPoints}\n`;
-    careerSummary += `Jogos disputados: ${player.careerStats.totalGames}\n`;
-    careerSummary += `Títulos da NBA: ${player.careerStats.championships}\n`;
-    careerSummary += `Média de pontos: ${(player.careerStats.totalPoints / player.careerStats.totalGames).toFixed(1)}\n\n`;
+    // Computa a relação com cada time baseado em campeonatos
+    const teamRelationships = {};
+    const teamTitles = {};
     
-    careerSummary += `Troféus conquistados:\n`;
-    allTrophies.forEach(trophy => {
-        if (player.trophyCounts[trophy.id] > 0) {
-            careerSummary += `- ${trophy.name}: ${player.trophyCounts[trophy.id]}x\n`;
+    // Inicializa títulos por time
+    player.careerStats.seasons.forEach(season => {
+        if (season.championship && season.team) {
+            const teamCode = season.team || player.team;
+            if (!teamTitles[teamCode]) {
+                teamTitles[teamCode] = 0;
+            }
+            teamTitles[teamCode]++;
         }
     });
     
-    if (isHOF) {
-        careerSummary += `\n🏛️ INDUZIDO AO HALL DA FAMA DO BASQUETE! 🏛️\n`;
-    }
+    // Define níveis de relacionamento com times
+    Object.keys(teamTitles).forEach(teamCode => {
+        const championships = teamTitles[teamCode];
+        
+        if (championships >= 5) {
+            teamRelationships[teamCode] = "LENDA IMORTAL";
+        } else if (championships >= 4) {
+            teamRelationships[teamCode] = "ÍCONE DA FRANQUIA";
+        } else if (championships >= 3) {
+            teamRelationships[teamCode] = "ASTRO DOMINANTE";
+        } else if (championships >= 2) {
+            teamRelationships[teamCode] = "JOGADOR CONSAGRADO";
+        } else if (championships >= 1) {
+            teamRelationships[teamCode] = "GRANDE NOME";
+        }
+    });
     
-    if (hasRetiredJersey) {
-        careerSummary += `\n👕 CAMISA APOSENTADA PELO ${teams[player.team].name}! 👕\n`;
+    // Cria o modal de aposentadoria
+    const modalOverlay = document.createElement('div');
+    modalOverlay.className = 'modal-overlay';
+
+    const modalContent = document.createElement('div');
+    modalContent.className = 'modal-content retirement-modal';
+
+    // Cabeçalho
+    const header = document.createElement('div');
+    header.className = 'retirement-header';
+    header.innerHTML = `
+        <h1>🏀 Fim de Carreira 🏀</h1>
+        <h2>${player.name} se aposentou após ${player.currentSeason} temporadas na NBA!</h2>
+    `;
+    
+    // Container principal
+    const retirementStats = document.createElement('div');
+    retirementStats.className = 'retirement-stats-grid';
+    
+    // Estatísticas gerais
+    const generalStats = document.createElement('div');
+    generalStats.className = 'retirement-box general-stats';
+    generalStats.innerHTML = `
+        <h3>Estatísticas de Carreira</h3>
+        <div class="general-stats-grid">
+            <div class="stat-box">
+                <span class="stat-value">${player.careerStats.totalGames}</span>
+                <span class="stat-label">Jogos</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value">${player.careerStats.totalPoints}</span>
+                <span class="stat-label">Pontos</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-value">${ppg}</span>
+                <span class="stat-label">PPG</span>
+            </div>
+            <div class="stat-box highlight">
+                <span class="stat-value">${player.careerStats.championships}</span>
+                <span class="stat-label">Títulos</span>
+            </div>
+        </div>
+    `;
+    
+    // Troféus conquistados
+    const trophiesBox = document.createElement('div');
+    trophiesBox.className = 'retirement-box trophies-box';
+    
+    let trophiesHTML = `<h3>Troféus Conquistados</h3><div class="trophies-grid">`;
+    allTrophies.forEach(trophy => {
+        if (player.trophyCounts[trophy.id] > 0) {
+            trophiesHTML += `
+                <div class="trophy-box">
+                    <span class="trophy-icon">🏆</span>
+                    <span class="trophy-name">${trophy.name}</span>
+                    <span class="trophy-count">${player.trophyCounts[trophy.id]}x</span>
+                </div>
+            `;
+        }
+    });
+    trophiesHTML += `</div>`;
+    trophiesBox.innerHTML = trophiesHTML;
+    
+    // Camisas aposentadas e relacionamentos com times
+    const jerseysBox = document.createElement('div');
+    jerseysBox.className = 'retirement-box jerseys-box';
+    
+    let jerseysHTML = `<h3>Legado nas Franquias</h3><div class="jerseys-grid">`;
+    
+    Object.keys(teamRelationships).forEach(teamCode => {
+        const teamName = teams[teamCode]?.name || "Time Desconhecido";
+        const teamLogo = teams[teamCode]?.logo || "";
+        const relationship = teamRelationships[teamCode];
+        const titles = teamTitles[teamCode];
+        
+        const retiredJersey = titles >= 2; // Camisa aposentada com 2+ títulos
+        
+        if (retiredJersey) {
+            unlockAchievement("jersey-retired");
+        }
+        
+        jerseysHTML += `
+            <div class="team-legacy ${retiredJersey ? 'retired-jersey' : ''}">
+                <div class="team-logo-container">
+                    <img src="${teamLogo}" alt="${teamName}" class="team-legacy-logo">
+                    ${retiredJersey ? '<div class="jersey-icon">👕</div>' : ''}
+                </div>
+                <div class="team-legacy-info">
+                    <h4>${teamName}</h4>
+                    <div class="relationship-level">${relationship}</div>
+                    <div class="team-titles">${titles} Título${titles > 1 ? 's' : ''}</div>
+                    ${retiredJersey ? '<div class="jersey-retired">Camisa Aposentada</div>' : ''}
+                </div>
+            </div>
+        `;
+    });
+    
+    jerseysHTML += `</div>`;
+    jerseysBox.innerHTML = jerseysHTML;
+    
+    // Conquistas especiais
+    const specialAchievements = document.createElement('div');
+    specialAchievements.className = 'retirement-box special-achievements';
+    
+    let specialHTML = `<h3>Conquistas Especiais</h3><div class="special-grid">`;
+    
+    if (isHOF) {
+        specialHTML += `
+            <div class="special-achievement hof">
+                <span class="special-icon">🏛️</span>
+                <div class="special-info">
+                    <h4>Hall da Fama do Basquete</h4>
+                    <p>Carreira histórica que moldou o jogo</p>
+                </div>
+            </div>
+        `;
     }
     
     if (isLegend) {
-        careerSummary += `\n🐐 STATUS LENDÁRIO ALCANÇADO! 🐐\n`;
+        specialHTML += `
+            <div class="special-achievement legend">
+                <span class="special-icon">🐐</span>
+                <div class="special-info">
+                    <h4>Status Lendário</h4>
+                    <p>Uma das maiores carreiras de todos os tempos</p>
+                </div>
+            </div>
+        `;
     }
     
-    // Exibe o resumo
-    alert(careerSummary);
+    specialHTML += `</div>`;
+    specialAchievements.innerHTML = specialHTML;
     
-    // Reinicia o jogo
-    if (confirm("Começar um novo jogador?")) {
+    // Botão para reiniciar
+    const restartButton = document.createElement('button');
+    restartButton.className = 'btn btn-restart';
+    restartButton.textContent = 'Novo Jogador';
+    restartButton.addEventListener('click', () => {
         window.location.reload();
-    }
+    });
+    
+    // Montagem final
+    retirementStats.appendChild(generalStats);
+    retirementStats.appendChild(trophiesBox);
+    retirementStats.appendChild(jerseysBox);
+    retirementStats.appendChild(specialAchievements);
+    
+    modalContent.appendChild(header);
+    modalContent.appendChild(retirementStats);
+    modalContent.appendChild(restartButton);
+    
+    modalOverlay.appendChild(modalContent);
+    document.body.appendChild(modalOverlay);
 }
 
 // Melhora as habilidades do jogador entre temporadas
 function improvePlayerSkills() {
     // Idade efetiva baseada na temporada (considerando que começa com 19-20 anos)
     const effectiveAge = 19 + player.currentSeason;
-    
+
     // Evolução do overall baseada na fase da carreira
     let overallChange = 0;
-    
+
     if (effectiveAge < 25) {
         // Fase de desenvolvimento (temporadas 1-5)
         overallChange = Math.floor(Math.random() * 3) + 1; // +1 a +3
@@ -2279,14 +2498,14 @@ function improvePlayerSkills() {
         // Fase de declínio avançado (temporadas 16+)
         overallChange = Math.floor(Math.random() * 2) - 2; // -2 a -1
     }
-    
+
     // Ajusta o overall (máximo 99, mínimo 65)
     player.overall = Math.min(99, Math.max(65, player.overall + overallChange));
-    
+
     // Ajusta cada atributo individual
     Object.keys(player.stats).forEach(stat => {
         let change = 0;
-        
+
         if (effectiveAge < 25) {
             // Jovem - mais chances de melhorar
             change = Math.floor(Math.random() * 3) - 1; // -1 a +2
@@ -2297,7 +2516,7 @@ function improvePlayerSkills() {
             // Veterano - mais chances de declínio
             change = Math.floor(Math.random() * 3) - 2; // -2 a 0
         }
-        
+
         // Limita entre 0 e 20
         player.stats[stat] = Math.min(20, Math.max(0, player.stats[stat] + change));
     });
@@ -2308,18 +2527,18 @@ function updateTeammates() {
     // Regenera completamente o elenco com base no time atual do jogador
     // Isso garante que sempre terá o elenco correto do time
     generateTeammates(player.team);
-    
+
     // Evolui um pouco os companheiros depois de gerar
     player.teammates.forEach(teammate => {
         const change = Math.floor(Math.random() * 3) - 1; // -1 a +1
         teammate.overall = Math.min(96, Math.max(70, teammate.overall + change));
     });
-    
+
     // Garante que existem 4 companheiros de equipe
     while (player.teammates.length > 4) {
         player.teammates.pop(); // Remove extras se necessário
     }
-    
+
     // Ordena por posição
     player.teammates.sort((a, b) => {
         const posOrder = { "PG": 1, "SG": 2, "SF": 3, "PF": 4, "C": 5 };
@@ -2331,33 +2550,132 @@ function updateTeammates() {
 function showTrophyGallery() {
     document.getElementById('player-dashboard').classList.add('hidden');
     document.getElementById('trophy-gallery').classList.remove('hidden');
-    
+
     const trophiesContainer = document.getElementById('trophies-container');
     trophiesContainer.innerHTML = '';
+
+    // Cria seção de abas para separar títulos de troféus individuais
+    const tabsSection = document.createElement('div');
+    tabsSection.className = 'trophy-tabs';
+    trophiesContainer.appendChild(tabsSection);
+
+    // Cria seção para os títulos da NBA
+    const championshipsSection = document.createElement('div');
+    championshipsSection.className = 'championships-section';
+    trophiesContainer.appendChild(championshipsSection);
+    
+    // Cria seção para troféus individuais
+    const individualTrophiesSection = document.createElement('div');
+    individualTrophiesSection.className = 'individual-trophies-section';
+    trophiesContainer.appendChild(individualTrophiesSection);
+    
+    // Adiciona título à seção
+    const championshipsHeader = document.createElement('h2');
+    championshipsHeader.className = 'section-header';
+    championshipsHeader.textContent = 'Títulos da NBA';
+    championshipsSection.appendChild(championshipsHeader);
+    
+    // Verifica se tem títulos da NBA
+    if (player.careerStats.championships > 0) {
+        // Cria container para os cards de título
+        const championshipsContainer = document.createElement('div');
+        championshipsContainer.className = 'championships-container';
+        championshipsSection.appendChild(championshipsContainer);
+        
+        // Adiciona cada título como um card
+        player.careerStats.seasons.forEach(season => {
+            if (season.championship) {
+                const championshipCard = document.createElement('div');
+                championshipCard.className = 'championship-card';
+                
+                // Tenta obter o time correto para aquela temporada
+                let teamForSeason = player.team;
+                // Aqui você poderia adicionar lógica para recuperar o time correto da temporada específica
+                
+                const championshipContent = document.createElement('div');
+                championshipContent.className = 'championship-content';
+                
+                // Logo do time
+                if (teams[teamForSeason]) {
+                    const teamLogo = document.createElement('img');
+                    teamLogo.src = teams[teamForSeason].logo;
+                    teamLogo.alt = teams[teamForSeason].name;
+                    teamLogo.className = 'championship-team-logo';
+                    championshipCard.appendChild(teamLogo);
+                }
+                
+                // Informações do título
+                const championshipInfo = document.createElement('div');
+                championshipInfo.className = 'championship-info';
+                
+                const teamName = document.createElement('h3');
+                teamName.textContent = teams[teamForSeason] ? teams[teamForSeason].name : 'Time';
+                
+                const seasonInfo = document.createElement('p');
+                seasonInfo.textContent = `Temporada ${season.season}`;
+                
+                // Verifica se foi MVP das finais
+                if (season.fmvp) {
+                    const fmvpBadge = document.createElement('div');
+                    fmvpBadge.className = 'fmvp-badge';
+                    fmvpBadge.innerHTML = '👑 MVP das Finais';
+                    championshipInfo.appendChild(fmvpBadge);
+                }
+                
+                championshipInfo.appendChild(teamName);
+                championshipInfo.appendChild(seasonInfo);
+                
+                const trophyIcon = document.createElement('div');
+                trophyIcon.className = 'trophy-icon-small';
+                trophyIcon.innerHTML = '🏆';
+                championshipInfo.appendChild(trophyIcon);
+                
+                championshipCard.appendChild(championshipInfo);
+                championshipsContainer.appendChild(championshipCard);
+            }
+        });
+    } else {
+        // Mensagem se não tiver títulos
+        const noChampionships = document.createElement('div');
+        noChampionships.className = 'no-championships';
+        noChampionships.textContent = 'Você ainda não conquistou nenhum título da NBA.';
+        championshipsSection.appendChild(noChampionships);
+    }
+    
+    // Adiciona título à seção de troféus individuais
+    const individualHeader = document.createElement('h2');
+    individualHeader.className = 'section-header';
+    individualHeader.textContent = 'Troféus Individuais';
+    individualTrophiesSection.appendChild(individualHeader);
+
+    // Adiciona os outros troféus na seção de troféus individuais
+    const individualTrophiesGrid = document.createElement('div');
+    individualTrophiesGrid.className = 'trophy-gallery-grid';
+    individualTrophiesSection.appendChild(individualTrophiesGrid);
     
     allTrophies.forEach(trophy => {
         const trophyItem = document.createElement('div');
         trophyItem.className = 'trophy-item';
-        
+
         const trophyIcon = document.createElement('div');
         trophyIcon.className = `trophy-icon ${player.trophyCounts[trophy.id] > 0 ? '' : 'trophy-locked'}`;
         trophyIcon.innerHTML = player.trophyCounts[trophy.id] > 0 ? '🏆' : '🔒';
-        
+
         const trophyName = document.createElement('h3');
         trophyName.textContent = trophy.name;
-        
+
         const trophyDesc = document.createElement('p');
         trophyDesc.textContent = trophy.description;
-        
+
         const trophyCount = document.createElement('div');
         trophyCount.className = 'trophy-count';
         trophyCount.textContent = player.trophyCounts[trophy.id] > 0 ? `${player.trophyCounts[trophy.id]}x` : '';
-        
+
         trophyItem.appendChild(trophyIcon);
         trophyItem.appendChild(trophyName);
         trophyItem.appendChild(trophyDesc);
         trophyItem.appendChild(trophyCount);
-        trophiesContainer.appendChild(trophyItem);
+        individualTrophiesGrid.appendChild(trophyItem);
     });
 }
 
@@ -2372,10 +2690,10 @@ function updatePlayerInfo() {
     document.getElementById('player-full-name').textContent = player.name;
     document.getElementById('player-team-info').textContent = 
         `${teams[player.team].name} - ${getPositionName(player.position)}`;
-    
+
     // Mostra o overall atualizado
     document.getElementById('player-overall').innerHTML = `Overall: <span>${player.overall}</span>`;
-    
+
     // Atualiza as estatísticas médias
     if (player.seasonStats.gamesPlayed > 0) {
         document.getElementById('ppg-stat').textContent = 
@@ -2385,10 +2703,10 @@ function updatePlayerInfo() {
         document.getElementById('rpg-stat').textContent = 
             (player.seasonStats.rebounds / player.seasonStats.gamesPlayed).toFixed(1);
     }
-    
+
     // Atualiza o logo do time atual
     const playerCard = document.querySelector('.player-card');
-    
+
     // Verifica se já existe um logo
     let teamLogoElement = playerCard.querySelector('.current-team-logo');
     if (!teamLogoElement) {
@@ -2397,24 +2715,24 @@ function updatePlayerInfo() {
         teamLogoElement.className = 'current-team-logo';
         playerCard.insertBefore(teamLogoElement, playerCard.firstChild);
     }
-    
+
     // Atualiza o logo
     teamLogoElement.innerHTML = `<img src="${teams[player.team].logo}" alt="${teams[player.team].name}">`;
-    
+
     // Atualiza o progresso da temporada
     document.getElementById('games-played').textContent = player.seasonStats.gamesPlayed;
     document.getElementById('season-progress').style.width = 
         `${(player.seasonStats.gamesPlayed / 82) * 100}%`;
-    
+
     // Atualiza a lista de jogos
     updateGamesList();
-    
+
     // Atualiza as conquistas
     updateAchievements();
-    
+
     // Atualiza a lista de companheiros de equipe
     updateTeammatesList();
-    
+
     // Mostra ou esconde o botão de ir para os playoffs
     document.getElementById('go-to-playoffs-btn').style.display = 
         (player.seasonStats.gamesPlayed >= 82 || player.seasonStats.playoffGames > 0) ? 'block' : 'none';
@@ -2424,7 +2742,7 @@ function updatePlayerInfo() {
 function updateTeammatesList() {
     const teammatesList = document.getElementById('teammates-list');
     teammatesList.innerHTML = '';
-    
+
     player.teammates.forEach(teammate => {
         const teammateElement = document.createElement('div');
         teammateElement.className = 'teammate';
@@ -2455,7 +2773,7 @@ function playGame() {
         alert("A temporada regular acabou! Vá para os playoffs.");
         return;
     }
-    
+
     // Gera estatísticas baseadas nos atributos do jogador e overall
     const gameStats = {
         points: generateStat(player.stats.shooting, 0, 50) * (player.overall / 70),
@@ -2466,32 +2784,32 @@ function playGame() {
         opponent: getRandomOpponent(),
         result: Math.random() > (0.5 - (player.overall - 70) * 0.005) ? "W" : "L" // Chance de vitória baseada no overall
     };
-    
+
     // Arredonda as estatísticas
     gameStats.points = Math.round(gameStats.points);
     gameStats.assists = Math.round(gameStats.assists);
     gameStats.rebounds = Math.round(gameStats.rebounds);
     gameStats.steals = Math.round(gameStats.steals);
     gameStats.blocks = Math.round(gameStats.blocks);
-    
+
     // Adiciona o jogo às estatísticas
     player.seasonStats.gamesPlayed++;
     player.seasonStats.points += gameStats.points;
     player.seasonStats.assists += gameStats.assists;
     player.seasonStats.rebounds += gameStats.rebounds;
     player.seasonStats.games.unshift(gameStats);
-    
+
     // Verifica conquistas
     checkAchievements(gameStats);
-    
+
     // Verifica se terminou a temporada regular
     if (player.seasonStats.gamesPlayed === 82) {
         awardSeasonTrophies();
     }
-    
+
     // Atualiza o painel
     updatePlayerInfo();
-    
+
     // Mostra o resultado do jogo
     alert(`Resultado da Partida:\n\n` +
           `VS ${gameStats.opponent}: ${gameStats.result === "W" ? "Vitória" : "Derrota"}\n` +
@@ -2508,10 +2826,10 @@ function awardSeasonTrophies() {
     const ppg = player.seasonStats.points / player.seasonStats.gamesPlayed;
     const apg = player.seasonStats.assists / player.seasonStats.gamesPlayed;
     const rpg = player.seasonStats.rebounds / player.seasonStats.gamesPlayed;
-    
+
     // Cria lista de prêmios conquistados para mostrar no final
     const awardsWon = [];
-    
+
     // All-Star (maior aleatoriedade, baseada em estatísticas)
     if ((player.overall >= 82 || ppg >= 18 || (ppg >= 13 && apg >= 6) || (ppg >= 13 && rpg >= 8)) && Math.random() > 0.3) {
         unlockTrophy("all-star");
@@ -2522,7 +2840,7 @@ function awardSeasonTrophies() {
             bonus: 1
         });
     }
-    
+
     // Artilheiro (muitos pontos, mas com maior dificuldade)
     if (ppg >= 25 && Math.random() > 0.6) {
         unlockTrophy("scoring-champ");
@@ -2533,7 +2851,7 @@ function awardSeasonTrophies() {
             bonus: 2
         });
     }
-    
+
     // All-NBA (estatísticas boas, mas com mais aleatoriedade)
     if ((ppg >= 20 || player.overall >= 88 || (ppg >= 16 && apg >= 7) || (ppg >= 16 && rpg >= 9)) && Math.random() > 0.5) {
         unlockTrophy("all-nba");
@@ -2544,11 +2862,11 @@ function awardSeasonTrophies() {
             bonus: 2
         });
     }
-    
+
     // MVP (muito mais difícil e aleatório)
     const mvpChance = Math.random();
     let mvpAchieved = false;
-    
+
     // Sistema de MVP mais rigoroso e com mais variações
     if (player.overall >= 92 && ppg >= 27 && (apg >= 6 || rpg >= 7) && mvpChance > 0.8) {
         // Superstar com estatísticas de elite - ainda assim só 20% de chance
@@ -2560,7 +2878,7 @@ function awardSeasonTrophies() {
         // Pontuador elite - apenas 10% de chance
         mvpAchieved = true;
     }
-    
+
     if (mvpAchieved) {
         unlockTrophy("mvp");
         awardsWon.push({
@@ -2570,7 +2888,7 @@ function awardSeasonTrophies() {
             bonus: 5
         });
     }
-    
+
     // Calouro do Ano (primeira temporada, baseado em estatísticas)
     if (player.currentSeason === 1 && ((ppg >= 14 && Math.random() > 0.4) || (ppg >= 18 && Math.random() > 0.2))) {
         unlockTrophy("rookie-year");
@@ -2581,7 +2899,7 @@ function awardSeasonTrophies() {
             bonus: 3
         });
     }
-    
+
     // Defensor do Ano (baseado em atributo de defesa e aleatoriedade)
     if ((player.stats.defense >= 15 && Math.random() > 0.75) || 
         (player.stats.defense >= 18 && Math.random() > 0.5)) {
@@ -2593,7 +2911,7 @@ function awardSeasonTrophies() {
             bonus: 3
         });
     }
-    
+
     // Jogador que Mais Evoluiu (menor chance)
     if (player.currentSeason > 1 && player.overall >= 84 && player.overall - 70 >= 10 && Math.random() > 0.8) {
         unlockTrophy("most-improved");
@@ -2604,7 +2922,7 @@ function awardSeasonTrophies() {
             bonus: 2
         });
     }
-    
+
     // Sexto Homem (muito raro, easter egg)
     if (Math.random() > 0.95) {
         unlockTrophy("sixth-man");
@@ -2615,7 +2933,7 @@ function awardSeasonTrophies() {
             bonus: 2
         });
     }
-    
+
     // Se conquistou algum prêmio, mostra tela de premiação
     if (awardsWon.length > 0) {
         showSeasonAwards(awardsWon);
@@ -2626,37 +2944,37 @@ function awardSeasonTrophies() {
 function showSeasonAwards(awards) {
     // Acumulador de bônus de overall
     let totalBonus = 0;
-    
+
     // Cria modal para mostrar os prêmios
     const modalOverlay = document.createElement('div');
     modalOverlay.className = 'modal-overlay';
-    
+
     const modalContent = document.createElement('div');
     modalContent.className = 'modal-content season-awards-modal';
-    
+
     const header = document.createElement('div');
     header.className = 'awards-header';
     header.innerHTML = `
         <h2>🏆 Prêmios da Temporada ${player.currentSeason} 🏆</h2>
         <p>Você conquistou prêmios importantes nesta temporada!</p>
     `;
-    
+
     const awardsList = document.createElement('div');
     awardsList.className = 'awards-list';
-    
+
     // Adiciona cada prêmio conquistado
     awards.forEach(award => {
         totalBonus += award.bonus;
-        
+
         const awardItem = document.createElement('div');
         awardItem.className = 'season-award-item';
-        
+
         let iconEmoji = '🏆';
         if (award.id === 'mvp') iconEmoji = '👑';
         else if (award.id === 'dpoy') iconEmoji = '🛡️';
         else if (award.id === 'scoring-champ') iconEmoji = '🏀';
         else if (award.id === 'rookie-year') iconEmoji = '🌟';
-        
+
         awardItem.innerHTML = `
             <div class="award-icon">${iconEmoji}</div>
             <div class="award-info">
@@ -2665,18 +2983,18 @@ function showSeasonAwards(awards) {
                 <div class="award-bonus">+${award.bonus} Overall</div>
             </div>
         `;
-        
+
         awardsList.appendChild(awardItem);
     });
-    
+
     // Adiciona o bônus de overall
     const bonusSection = document.createElement('div');
     bonusSection.className = 'total-bonus-section';
-    
+
     // Aplica o bônus ao overall
     const oldOverall = player.overall;
     player.overall = Math.min(99, player.overall + totalBonus);
-    
+
     bonusSection.innerHTML = `
         <h3>Bônus Total de Overall</h3>
         <div class="overall-change">
@@ -2686,7 +3004,7 @@ function showSeasonAwards(awards) {
         </div>
         <p>Continue assim para ganhar mais prêmios!</p>
     `;
-    
+
     // Botão para continuar
     const continueButton = document.createElement('button');
     continueButton.className = 'btn';
@@ -2694,13 +3012,13 @@ function showSeasonAwards(awards) {
     continueButton.addEventListener('click', () => {
         document.body.removeChild(modalOverlay);
     });
-    
+
     // Monta a modal
     modalContent.appendChild(header);
     modalContent.appendChild(awardsList);
     modalContent.appendChild(bonusSection);
     modalContent.appendChild(continueButton);
-    
+
     modalOverlay.appendChild(modalContent);
     document.body.appendChild(modalOverlay);
 }
@@ -2711,9 +3029,9 @@ function skipGames(numberOfGames) {
         alert("A temporada regular já acabou!");
         return;
     }
-    
+
     const gamesToPlay = Math.min(numberOfGames, 82 - player.seasonStats.gamesPlayed);
-    
+
     for (let i = 0; i < gamesToPlay; i++) {
         const gameStats = {
             points: generateStat(player.stats.shooting, 0, 35) * (player.overall / 70),
@@ -2724,30 +3042,30 @@ function skipGames(numberOfGames) {
             opponent: getRandomOpponent(),
             result: Math.random() > (0.5 - (player.overall - 70) * 0.005) ? "W" : "L"
         };
-        
+
         gameStats.points = Math.round(gameStats.points);
         gameStats.assists = Math.round(gameStats.assists);
         gameStats.rebounds = Math.round(gameStats.rebounds);
         gameStats.steals = Math.round(gameStats.steals);
         gameStats.blocks = Math.round(gameStats.blocks);
-        
+
         player.seasonStats.gamesPlayed++;
         player.seasonStats.points += gameStats.points;
         player.seasonStats.assists += gameStats.assists;
         player.seasonStats.rebounds += gameStats.rebounds;
         player.seasonStats.games.unshift(gameStats);
-        
+
         // Verifica conquistas apenas no último jogo pulado
         if (i === gamesToPlay - 1) {
             checkAchievements(gameStats);
         }
     }
-    
+
     // Verifica se terminou a temporada
     if (player.seasonStats.gamesPlayed === 82) {
         awardSeasonTrophies();
     }
-    
+
     updatePlayerInfo();
     alert(`Você pulou ${gamesToPlay} jogos!\n\nEstatísticas atualizadas.`);
 }
@@ -2756,13 +3074,13 @@ function skipGames(numberOfGames) {
 function generateStat(attribute, min, max) {
     // Reduz o peso do atributo base para evitar que o jogador sempre domine
     const base = (attribute / 30) * (max * 0.5);
-    
+
     // Maior variação aleatória (60% do valor máximo possível)
     const variation = (Math.random() - 0.5) * (max * 0.6);
-    
+
     // Adiciona um fator de consistência mais variável
     let streakFactor = 0;
-    
+
     const streakRoll = Math.random();
     if (streakRoll > 0.92) {
         // Apenas 8% de chance de jogo excelente 
@@ -2777,13 +3095,13 @@ function generateStat(attribute, min, max) {
         // 10% de chance de jogo abaixo da média
         streakFactor = -1 * (Math.random() * max * 0.1);
     }
-    
+
     // Adiciona fator de aleatoriedade do jogo
     const gameFactor = Math.random() * max * 0.1;
-    
+
     // Valor máximo real depende da posição e do tipo de estatística
     const adjustedMax = max * 0.85; // Reduz o máximo para evitar jogos de 50 pontos constantes
-    
+
     return Math.max(min, Math.min(adjustedMax, Math.round(base + variation + streakFactor + gameFactor)));
 }
 
@@ -2801,14 +3119,14 @@ function getRandomOpponent() {
 function updateGamesList() {
     const gamesList = document.getElementById('games-list');
     gamesList.innerHTML = '';
-    
+
     const recentGames = player.seasonStats.games.slice(0, 5);
-    
+
     if (recentGames.length === 0) {
         gamesList.innerHTML = '<p>Nenhuma partida jogada ainda.</p>';
         return;
     }
-    
+
     recentGames.forEach((game, index) => {
         const gameItem = document.createElement('div');
         gameItem.className = 'game-item';
@@ -2831,12 +3149,12 @@ function checkAchievements(gameStats) {
     if (player.seasonStats.gamesPlayed === 1 && !hasAchievement("first-game")) {
         unlockAchievement("first-game");
     }
-    
+
     // Primeiros pontos
     if (gameStats.points > 0 && !hasAchievement("first-points")) {
         unlockAchievement("first-points");
     }
-    
+
     // Duplo-duplo
     if ((gameStats.points >= 10 && gameStats.assists >= 10) ||
         (gameStats.points >= 10 && gameStats.rebounds >= 10) ||
@@ -2845,24 +3163,24 @@ function checkAchievements(gameStats) {
             unlockAchievement("double-double");
         }
     }
-    
+
     // Triple-double
     if (gameStats.points >= 10 && gameStats.assists >= 10 && gameStats.rebounds >= 10) {
         if (!hasAchievement("triple-double")) {
             unlockAchievement("triple-double");
         }
     }
-    
+
     // 30 pontos
     if (gameStats.points >= 30 && !hasAchievement("30-points")) {
         unlockAchievement("30-points");
     }
-    
+
     // 50 pontos
     if (gameStats.points >= 50 && !hasAchievement("50-point-game")) {
         unlockAchievement("50-point-game");
     }
-    
+
     // 10 assistências
     if (gameStats.assists >= 10 && !hasAchievement("10-assists")) {
         unlockAchievement("10-assists");
@@ -2878,56 +3196,66 @@ function hasAchievement(achievementId) {
 function unlockAchievement(achievementId) {
     if (!hasAchievement(achievementId)) {
         player.achievements.push(achievementId);
-        
+
         // Marca como desbloqueada na lista completa
         const achievement = allAchievements.find(a => a.id === achievementId);
         if (achievement) {
             achievement.earned = true;
-            
-            // Mostra modal em vez de alerta
-            showAchievementModal(achievement);
+
+            // Mostra notificação estilo Steam em vez de modal
+            showAchievementNotification(achievement);
         }
     }
 }
 
-// Mostra conquista desbloqueada em uma modal
-function showAchievementModal(achievement) {
-    // Remove qualquer modal existente
-    const existingModal = document.querySelector('.modal-overlay');
-    if (existingModal) {
-        document.body.removeChild(existingModal);
+// Mostra notificação de conquista no estilo Steam
+function showAchievementNotification(achievement) {
+    // Limita o número de notificações simultâneas
+    const maxNotifications = 3;
+    const existingNotifications = document.querySelectorAll('.achievement-notification');
+    
+    // Se já existir muitas notificações, remove a mais antiga
+    if (existingNotifications.length >= maxNotifications) {
+        document.body.removeChild(existingNotifications[0]);
     }
     
-    // Cria a nova modal
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
+    // Ajusta a posição com base nas notificações existentes
+    // Aumenta o espaçamento entre as notificações
+    const notificationOffset = existingNotifications.length * 95;
+
+    // Cria a notificação
+    const notification = document.createElement('div');
+    notification.className = 'achievement-notification';
+    notification.style.bottom = `${20 + notificationOffset}px`;
     
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content achievement-modal';
+    // Ícone apropriado para a conquista
+    let icon = '⭐';
+    if (achievement.id.includes('champion')) icon = '🏆';
+    else if (achievement.id.includes('points')) icon = '🏀';
+    else if (achievement.id.includes('playoff')) icon = '🔥';
     
-    modalContent.innerHTML = `
-        <div class="achievement-modal-header">
-            <h2>🏆 Conquista Desbloqueada! 🏆</h2>
-        </div>
-        
-        <div class="achievement-modal-content">
-            <div class="achievement-icon">⭐</div>
-            <div class="achievement-details">
-                <h3>${achievement.name}</h3>
+    notification.innerHTML = `
+        <div class="achievement-notification-icon">${icon}</div>
+        <div class="achievement-notification-content">
+            <div class="achievement-notification-title">Conquista Desbloqueada</div>
+            <div class="achievement-notification-description">
+                <strong>${achievement.name}</strong>
                 <p>${achievement.description}</p>
             </div>
+            <div class="achievement-notification-progress">
+                <div class="achievement-notification-progress-bar"></div>
+            </div>
         </div>
-        
-        <button class="btn btn-achievement">Continuar</button>
     `;
     
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
+    document.body.appendChild(notification);
     
-    // Adiciona evento ao botão
-    modalContent.querySelector('.btn-achievement').addEventListener('click', () => {
-        document.body.removeChild(modalOverlay);
-    });
+    // Remove a notificação após a animação
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+        }
+    }, 6000);
 }
 
 // Desbloqueia um troféu
@@ -2935,71 +3263,82 @@ function unlockTrophy(trophyId) {
     const trophy = allTrophies.find(t => t.id === trophyId);
     if (trophy) {
         player.trophyCounts[trophy.id]++;
-        
-        // Mostra modal apenas na primeira vez
+
+        // Mostra notificação apenas na primeira vez
         if (player.trophyCounts[trophy.id] === 1) {
-            showTrophyModal(trophy);
+            showTrophyNotification(trophy);
         }
     }
 }
 
-// Mostra troféu conquistado em uma modal
-function showTrophyModal(trophy) {
-    // Remove qualquer modal existente
-    const existingModal = document.querySelector('.modal-overlay');
-    if (existingModal) {
-        document.body.removeChild(existingModal);
+// Mostra notificação de troféu no estilo Steam
+function showTrophyNotification(trophy) {
+    // Limita o número de notificações simultâneas
+    const maxNotifications = 3;
+    const existingNotifications = document.querySelectorAll('.achievement-notification');
+    
+    // Se já existir muitas notificações, remove a mais antiga
+    if (existingNotifications.length >= maxNotifications) {
+        document.body.removeChild(existingNotifications[0]);
     }
     
-    // Cria a nova modal
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
+    // Ajusta a posição com base nas notificações existentes
+    // Aumenta o espaçamento entre as notificações
+    const notificationOffset = existingNotifications.length * 95;
+
+    // Cria a notificação
+    const notification = document.createElement('div');
+    notification.className = 'achievement-notification trophy-notification';
+    notification.style.bottom = `${20 + notificationOffset}px`;
     
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content trophy-modal';
+    // Ícones personalizados baseados no tipo de troféu
+    let icon = '🏆';
+    if (trophy.id === 'mvp') icon = '👑';
+    else if (trophy.id === 'scoring-champ') icon = '🏀';
+    else if (trophy.id === 'dpoy') icon = '🛡️';
+    else if (trophy.id === 'rookie-year') icon = '🌟';
     
-    modalContent.innerHTML = `
-        <div class="trophy-modal-header">
-            <h2>🏆 Troféu Conquistado! 🏆</h2>
-        </div>
-        
-        <div class="trophy-modal-content">
-            <div class="trophy-big-icon">🏆</div>
-            <div class="trophy-details">
-                <h3>${trophy.name}</h3>
+    notification.innerHTML = `
+        <div class="achievement-notification-icon">${icon}</div>
+        <div class="achievement-notification-content">
+            <div class="achievement-notification-title">Troféu Conquistado</div>
+            <div class="achievement-notification-description">
+                <strong>${trophy.name}</strong>
                 <p>${trophy.description}</p>
             </div>
+            <div class="achievement-notification-progress">
+                <div class="achievement-notification-progress-bar"></div>
+            </div>
         </div>
-        
-        <button class="btn btn-trophy">Continuar</button>
     `;
     
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
+    document.body.appendChild(notification);
     
-    // Adiciona evento ao botão
-    modalContent.querySelector('.btn-trophy').addEventListener('click', () => {
-        document.body.removeChild(modalOverlay);
-    });
+    // Remove a notificação após a animação
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+        }
+    }, 6000);
 }
 
 // Atualiza a lista de conquistas
 function updateAchievements() {
     const achievementsList = document.getElementById('achievements-list');
     achievementsList.innerHTML = '';
-    
+
     if (player.achievements.length === 0) {
         achievementsList.innerHTML = '<p>Nenhuma conquista ainda. Continue jogando!</p>';
         return;
     }
-    
+
     // Adiciona botão para ver troféus
     const trophyButton = document.createElement('button');
     trophyButton.className = 'btn';
     trophyButton.textContent = 'Ver Troféus';
     trophyButton.addEventListener('click', showTrophyGallery);
     achievementsList.appendChild(trophyButton);
-    
+
     player.achievements.forEach(achievementId => {
         const achievement = allAchievements.find(a => a.id === achievementId);
         if (achievement) {
@@ -3024,7 +3363,7 @@ function playGame() {
         alert("A temporada regular acabou! Vá para os playoffs.");
         return;
     }
-    
+
     // Gera estatísticas baseadas nos atributos do jogador e overall
     const gameStats = {
         points: generateStat(player.stats.shooting, 0, 50) * (player.overall / 70),
@@ -3035,32 +3374,32 @@ function playGame() {
         opponent: getRandomOpponent(),
         result: Math.random() > (0.5 - (player.overall - 70) * 0.005) ? "W" : "L" // Chance de vitória baseada no overall
     };
-    
+
     // Arredonda as estatísticas
     gameStats.points = Math.round(gameStats.points);
     gameStats.assists = Math.round(gameStats.assists);
     gameStats.rebounds = Math.round(gameStats.rebounds);
     gameStats.steals = Math.round(gameStats.steals);
     gameStats.blocks = Math.round(gameStats.blocks);
-    
+
     // Adiciona o jogo às estatísticas
     player.seasonStats.gamesPlayed++;
     player.seasonStats.points += gameStats.points;
     player.seasonStats.assists += gameStats.assists;
     player.seasonStats.rebounds += gameStats.rebounds;
     player.seasonStats.games.unshift(gameStats);
-    
+
     // Verifica conquistas
     checkAchievements(gameStats);
-    
+
     // Verifica se terminou a temporada regular
     if (player.seasonStats.gamesPlayed === 82) {
         awardSeasonTrophies();
     }
-    
+
     // Atualiza o painel
     updatePlayerInfo();
-    
+
     // Mostra o resultado do jogo
     alert(`Resultado da Partida:\n\n` +
           `VS ${gameStats.opponent}: ${gameStats.result === "W" ? "Vitória" : "Derrota"}\n` +
@@ -3077,9 +3416,9 @@ function skipGames(numberOfGames) {
         alert("A temporada regular já acabou!");
         return;
     }
-    
+
     const gamesToPlay = Math.min(numberOfGames, 82 - player.seasonStats.gamesPlayed);
-    
+
     for (let i = 0; i < gamesToPlay; i++) {
         const gameStats = {
             points: generateStat(player.stats.shooting, 0, 35) * (player.overall / 70),
@@ -3090,30 +3429,30 @@ function skipGames(numberOfGames) {
             opponent: getRandomOpponent(),
             result: Math.random() > (0.5 - (player.overall - 70) * 0.005) ? "W" : "L"
         };
-        
+
         gameStats.points = Math.round(gameStats.points);
         gameStats.assists = Math.round(gameStats.assists);
         gameStats.rebounds = Math.round(gameStats.rebounds);
         gameStats.steals = Math.round(gameStats.steals);
         gameStats.blocks = Math.round(gameStats.blocks);
-        
+
         player.seasonStats.gamesPlayed++;
         player.seasonStats.points += gameStats.points;
         player.seasonStats.assists += gameStats.assists;
         player.seasonStats.rebounds += gameStats.rebounds;
         player.seasonStats.games.unshift(gameStats);
-        
+
         // Verifica conquistas apenas no último jogo pulado
         if (i === gamesToPlay - 1) {
             checkAchievements(gameStats);
         }
     }
-    
+
     // Verifica se terminou a temporada
     if (player.seasonStats.gamesPlayed === 82) {
         awardSeasonTrophies();
     }
-    
+
     updatePlayerInfo();
     alert(`Você pulou ${gamesToPlay} jogos!\n\nEstatísticas atualizadas.`);
 }
